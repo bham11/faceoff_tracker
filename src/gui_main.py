@@ -34,7 +34,11 @@ if __name__ == '__main__':
 
     log = tk.Text(master=input_frame)
 
-    hockey_rink = ImageTk.PhotoImage(Image.open("hockey_rink.png"))
+    photo = Image.open("hockey_rink.png")
+    # TODO: do this in the photo
+    # re_sized_photo = photo.resize((500, 500))
+    # rotated = re_sized_photo.rotate(90)
+    hockey_rink = ImageTk.PhotoImage(photo)
     rink_photo = tk.Label(master=input_frame, image=hockey_rink)
 
     rink_photo.pack()
@@ -60,7 +64,7 @@ if __name__ == '__main__':
     def add_FO(e):
         if HUSKIES[husky.get()]["vs"].get(opp.get(), None) is None:
             HUSKIES[husky.get()]["vs"][opp.get()] = {"w": 0, "l": 0}
-        HUSKIES[husky.get()]["vs"][opp.get()][result.get()] += 1
+        HUSKIES[husky.get()]["vs"][opp.get()][result.get().lower()] += 1
         log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone: {ZONE_MAPPING[zone.get()]}: {result.get()}\n")
 
 
