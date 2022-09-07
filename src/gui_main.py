@@ -70,17 +70,26 @@ if __name__ == '__main__':
     whose_stats = tk.Label(master=stats_frame, text="What Husky's FO stats?")
     look_up = tk.Entry(master=stats_frame)
 
+
+    def display_stats():
+        center_list = ['10', '27', '29', '7', '15']
+        if look_up.get() not in center_list:
+            stats_log.insert("1.0", "Please input a valid husky: 10, 27, 29, 7, 15\n")
+            look_up.delete(0,END)
+            look_up.focus()
+        data = pd.DataFrame.from_dict(data=HUSKIES[look_up.get()]["vs"])
+        stats_log.delete("1.0",END)
+        stats_log.insert("1.0",f"{data}\n")
+
+
+    # look_up.bind("<Enter>", display_stats)
+    display_bttn = tk.Button(master=stats_frame, text="Search", command=display_stats)
+
     whose_stats.pack()
     look_up.pack()
+    display_bttn.pack()
     stats_log.pack()
     stats_frame.pack(side="left")
-
-
-    def display_stats(e):
-        pd.DataFrame.from_dict(data=HUSKIES[look_up.get()]['vs'])
-
-
-    look_up.bind("<Enter>", display_stats)
 
     zone.focus()
 
@@ -137,7 +146,6 @@ if __name__ == '__main__':
             HUSKIES[husky.get()]["vs"][opp.get()][formatted_zone][result.get().lower()] += 1
             HUSKIES[husky.get()]["vs"][opp.get()]["TOTAL"][result.get().lower()] += 1
             log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
-            log.insert("1.0", f"{HUSKIES[husky.get()]['vs']}")
 
             # adding stats to pandas dataframe
 
