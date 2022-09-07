@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import END
 
-from src.faceoff_data import HUSKIES, ZONE_MAPPING
+import pandas as pd
+
+from src.faceoff_data import ZONE_MAPPING, HUSKIES
 from PIL import ImageTk, Image
 
 if __name__ == '__main__':
+
     window = tk.Tk()
     window.title("Northeastern Huskies Hockey - Faceoff Tracker")
     # Full screen
@@ -35,7 +38,7 @@ if __name__ == '__main__':
 
     clear_entries = tk.Button(master=input_frame, text="Clear", command=clear_ents)
 
-    log = tk.Text(master=input_frame, height= 50, width= 50)
+    log = tk.Text(master=input_frame, height=50, width=50)
 
     # packing input widgets and frame
     what_zone.pack()
@@ -54,7 +57,7 @@ if __name__ == '__main__':
     # rink photo for zone clues
     rink_frame = tk.Frame()
     photo = Image.open("vert-hockey-rink.png")
-    re_sized_photo = photo.resize((200,500))
+    re_sized_photo = photo.resize((200, 500))
     hockey_rink = ImageTk.PhotoImage(re_sized_photo)
     rink_photo = tk.Label(master=rink_frame, image=hockey_rink)
 
@@ -72,13 +75,12 @@ if __name__ == '__main__':
     stats_log.pack()
     stats_frame.pack(side="left")
 
+
     def display_stats(e):
-        pass
+        pd.DataFrame.from_dict(data=HUSKIES[look_up.get()]['vs'])
+
 
     look_up.bind("<Enter>", display_stats)
-
-
-
 
     zone.focus()
 
@@ -129,13 +131,15 @@ if __name__ == '__main__':
                     "RDNZ": {"w": 0, "l": 0},
                     "LONZ": {"w": 0, "l": 0},
                     "RONZ": {"w": 0, "l": 0},
+                    "TOTAL": {"w": 0, "l": 0}
                 }
             formatted_zone = ZONE_MAPPING[zone.get()]
             HUSKIES[husky.get()]["vs"][opp.get()][formatted_zone][result.get().lower()] += 1
+            HUSKIES[husky.get()]["vs"][opp.get()]["TOTAL"][result.get().lower()] += 1
             log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
+            log.insert("1.0", f"{HUSKIES[husky.get()]['vs']}")
 
             # adding stats to pandas dataframe
-
 
             clear_ents()
 
