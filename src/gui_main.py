@@ -7,6 +7,8 @@ from PIL import ImageTk, Image
 if __name__ == '__main__':
     window = tk.Tk()
     window.title("Northeastern Huskies Hockey - Faceoff Tracker")
+    # Full screen
+    # window.state("zoomed")
 
     input_frame = tk.Frame()
 
@@ -28,20 +30,14 @@ if __name__ == '__main__':
         husky.delete(0, END)
         opp.delete(0, END)
         result.delete(0, END)
+        zone.focus()
 
 
     clear_entries = tk.Button(master=input_frame, text="Clear", command=clear_ents)
 
-    log = tk.Text(master=input_frame)
+    log = tk.Text(master=input_frame, height= 50, width= 50)
 
-    photo = Image.open("hockey_rink.png")
-    # TODO: do this in the photo
-    # re_sized_photo = photo.resize((500, 500))
-    # rotated = re_sized_photo.rotate(90)
-    hockey_rink = ImageTk.PhotoImage(photo)
-    rink_photo = tk.Label(master=input_frame, image=hockey_rink)
-
-    rink_photo.pack()
+    # packing input widgets and frame
     what_zone.pack()
     zone.pack()
     what_husky.pack()
@@ -53,21 +49,100 @@ if __name__ == '__main__':
     clear_entries.pack()
     log.pack()
 
-    input_frame.pack()
+    input_frame.pack(side="right")
+
+    # rink photo for zone clues
+    rink_frame = tk.Frame()
+    photo = Image.open("vert-hockey-rink.png")
+    re_sized_photo = photo.resize((200,500))
+    hockey_rink = ImageTk.PhotoImage(re_sized_photo)
+    rink_photo = tk.Label(master=rink_frame, image=hockey_rink)
+
+    rink_photo.pack()
+    rink_frame.pack(side="top")
+
+    # stats frame and widgets
+    stats_frame = tk.Frame()
+    stats_log = tk.Text(master=stats_frame)
+    whose_stats = tk.Label(master=stats_frame, text="What Husky's FO stats?")
+    look_up = tk.Entry(master=stats_frame)
+
+    whose_stats.pack()
+    look_up.pack()
+    stats_log.pack()
+    stats_frame.pack(side="left")
+
+    def display_stats(e):
+        pass
+
+    look_up.bind("<Enter>", display_stats)
+
+
+
 
     zone.focus()
-    zone.bind("<Return>", lambda funct1: husky.focus())
-    husky.bind("<Return>", lambda funct1: opp.focus())
-    opp.bind("<Return>", lambda funct1: result.focus())
+
+
+    def valid_zone(e):
+        zone_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        if zone.get() not in zone_list:
+            log.insert("1.0", "Please input a valid zone: 1-9\n")
+            zone.delete(0, END)
+            zone.focus()
+        else:
+            husky.focus()
+
+
+    def valid_husky(e):
+        center_list = ['10', '27', '29', '7', '15']
+        if husky.get() not in center_list:
+            log.insert("1.0", "Please input a valid husky: 10, 27, 29, 7, 15\n")
+            husky.delete(0, END)
+            husky.focus()
+        else:
+            opp.focus()
+
+
+    def valid_opp(e):
+        if not opp.get().isdigit():
+            log.insert("1.0", "Please input a valid opponent jersey number\n")
+            opp.delete(0, END)
+            opp.focus()
+        else:
+            result.focus()
 
 
     def add_FO(e):
-        if HUSKIES[husky.get()]["vs"].get(opp.get(), None) is None:
-            HUSKIES[husky.get()]["vs"][opp.get()] = {"w": 0, "l": 0}
-        HUSKIES[husky.get()]["vs"][opp.get()][result.get().lower()] += 1
-        log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone: {ZONE_MAPPING[zone.get()]}: {result.get()}\n")
+        if result.get().lower() not in ['w', 'l']:
+            log.insert("1.0", "Please input a valid result (W or L)\n")
+            result.delete(0, END)
+            result.focus()
+        else:
+            if HUSKIES[husky.get()]["vs"].get(opp.get(), None) is None:
+                HUSKIES[husky.get()]["vs"][opp.get()] = {
+                    "LD": {"w": 0, "l": 0},
+                    "RD": {"w": 0, "l": 0},
+                    "RO": {"w": 0, "l": 0},
+                    "LO": {"w": 0, "l": 0},
+                    "C": {"w": 0, "l": 0},
+                    "LDNZ": {"w": 0, "l": 0},
+                    "RDNZ": {"w": 0, "l": 0},
+                    "LONZ": {"w": 0, "l": 0},
+                    "RONZ": {"w": 0, "l": 0},
+                }
+            formatted_zone = ZONE_MAPPING[zone.get()]
+            HUSKIES[husky.get()]["vs"][opp.get()][formatted_zone][result.get().lower()] += 1
+            log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
+
+            # adding stats to pandas dataframe
 
 
+            clear_ents()
+
+
+    zone.bind("<Return>", valid_zone)
+    husky.bind("<Return>", valid_husky)
+    opp.bind("<Return>", valid_opp)
     result.bind("<Return>", add_FO)
 
     window.mainloop()
