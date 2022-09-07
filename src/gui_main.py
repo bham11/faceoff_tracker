@@ -126,9 +126,9 @@ if __name__ == '__main__':
                 data.loc[len(data)] = to_add
             data = data.reset_index(drop=True)
             # data = data.drop('vs', axis=1)
-            # data = data.applymap(lambda perc: str(perc * 100) + '%')
-            # stats_log.delete("1.0", END)
-            stats_log.insert("1.0", f"{data.to_markdown()}\n")
+            data = data.applymap(lambda perc: str(perc * 100) + '%')
+            stats_log.delete("1.0", END)
+            stats_log.insert("1.0", f"{data.to_markdown(index=False)}\n")
 
 
     # look_up.bind("<Enter>", display_stats)
