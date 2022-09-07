@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import END
+from tkinter import END, BOTTOM, NONE
 
 import pandas as pd
 
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     clear_entries = tk.Button(master=input_frame, text="Clear", command=clear_ents)
 
-    log = tk.Text(master=input_frame, height=50, width=50)
+    log = tk.Text(master=input_frame)
 
     # packing input widgets and frame
     what_zone.pack()
@@ -56,8 +56,8 @@ if __name__ == '__main__':
 
     # rink photo for zone clues
     rink_frame = tk.Frame()
-    photo = Image.open("vert-hockey-rink.png")
-    re_sized_photo = photo.resize((200, 500))
+    photo = Image.open("hori_hockey_rink.png")
+    re_sized_photo = photo.resize((500, 200))
     hockey_rink = ImageTk.PhotoImage(re_sized_photo)
     rink_photo = tk.Label(master=rink_frame, image=hockey_rink)
 
@@ -66,29 +66,55 @@ if __name__ == '__main__':
 
     # stats frame and widgets
     stats_frame = tk.Frame()
-    stats_log = tk.Text(master=stats_frame)
+    slog_scrollbar = tk.Scrollbar(stats_frame, orient="horizontal")
+    stats_log = tk.Text(master=stats_frame, wrap=NONE, xscrollcommand=slog_scrollbar.set)
     whose_stats = tk.Label(master=stats_frame, text="What Husky's FO stats?")
     look_up = tk.Entry(master=stats_frame)
 
 
     def display_stats():
         center_list = ['10', '27', '29', '7', '15']
-        if look_up.get() not in center_list:
-            stats_log.insert("1.0", "Please input a valid husky: 10, 27, 29, 7, 15\n")
-            look_up.delete(0,END)
+        if not look_up.get() in HUSKIES.keys():
+            stats_log.insert("1.0", "Please input a valid husky\n")
+            look_up.delete(0, END)
+            stats_log.delete("2.0", END)
             look_up.focus()
-        data = pd.DataFrame.from_dict(data=HUSKIES[look_up.get()]["vs"])
-        stats_log.delete("1.0",END)
-        stats_log.insert("1.0",f"{data}\n")
+        else:
+            data = pd.DataFrame.from_dict(data=HUSKIES[look_up.get()]["vs"])
+            stats_log.delete("1.0", END)
+            stats_log.insert("1.0", f"{data.to_markdown()}\n")
+
+
+    def display_percentage():
+        center_list = ['10', '27', '29', '7', '15']
+        if not str(look_up.get()) in HUSKIES.keys():
+            stats_log.insert("1.0", "Please input a valid husky\n")
+            look_up.delete(0, END)
+            stats_log.delete("2.0", END)
+            look_up.focus()
+
+        else:
+            # each guys zone percentage on the same table. specific columns and rows
+            data = pd.DataFrame(data=HUSKIES[look_up.get()])
+            for key in HUSKIES[look_up.get()]["vs"]:
+                data = data.drop(key, axis=0)
+            data = data.drop('vs', axis=1)
+            data = data.applymap(lambda perc: str(perc * 100) + '%')
+            stats_log.delete("1.0", END)
+            stats_log.insert("1.0", f"{data.to_markdown()}\n")
 
 
     # look_up.bind("<Enter>", display_stats)
     display_bttn = tk.Button(master=stats_frame, text="Search", command=display_stats)
+    whose_percentage = tk.Button(master=stats_frame, text="FO %", command=display_percentage)
 
     whose_stats.pack()
     look_up.pack()
     display_bttn.pack()
+    whose_percentage.pack()
     stats_log.pack()
+    slog_scrollbar.pack(side=BOTTOM, fill='x')
+    slog_scrollbar.config(command=stats_log.xview)
     stats_frame.pack(side="left")
 
     zone.focus()
@@ -106,8 +132,8 @@ if __name__ == '__main__':
 
     def valid_husky(e):
         center_list = ['10', '27', '29', '7', '15']
-        if husky.get() not in center_list:
-            log.insert("1.0", "Please input a valid husky: 10, 27, 29, 7, 15\n")
+        if not husky.get().isdigit():
+            log.insert("1.0", "Please input a valid husky jersey\n")
             husky.delete(0, END)
             husky.focus()
         else:
@@ -129,6 +155,23 @@ if __name__ == '__main__':
             result.delete(0, END)
             result.focus()
         else:
+            if HUSKIES.get(husky.get(), None) is None:
+                HUSKIES[husky.get()] = {
+                    "vs": {
+
+                    },
+                    "zone%": {
+                        "LD": 0,
+                        "RD": 0,
+                        "RO": 0,
+                        "LO": 0,
+                        "C": 0,
+                        "LDNZ": 0,
+                        "RDNZ": 0,
+                        "LONZ": 0,
+                        "RONZ": 0,
+                    }
+                }
             if HUSKIES[husky.get()]["vs"].get(opp.get(), None) is None:
                 HUSKIES[husky.get()]["vs"][opp.get()] = {
                     "LD": {"w": 0, "l": 0},
@@ -140,14 +183,21 @@ if __name__ == '__main__':
                     "RDNZ": {"w": 0, "l": 0},
                     "LONZ": {"w": 0, "l": 0},
                     "RONZ": {"w": 0, "l": 0},
-                    "TOTAL": {"w": 0, "l": 0}
+                    "TOTAL": {"w": 0, "l": 0},
                 }
-            formatted_zone = ZONE_MAPPING[zone.get()]
-            HUSKIES[husky.get()]["vs"][opp.get()][formatted_zone][result.get().lower()] += 1
-            HUSKIES[husky.get()]["vs"][opp.get()]["TOTAL"][result.get().lower()] += 1
-            log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
 
-            # adding stats to pandas dataframe
+            # adding FO to 'vs' dict
+            formatted_zone = ZONE_MAPPING[zone.get()]
+            prefix_zone = HUSKIES[husky.get()]["vs"][opp.get()][formatted_zone]
+            prefix_total = HUSKIES[husky.get()]["vs"][opp.get()]["TOTAL"]
+            prefix_zone[result.get().lower()] += 1
+            prefix_total[result.get().lower()] += 1
+
+            # adding FO to 'zone%' dict
+            decimal = prefix_zone['w'] / (prefix_zone['w'] + prefix_zone['l'])
+            HUSKIES[husky.get()]['zone%'][formatted_zone] = decimal
+
+            log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
 
             clear_ents()
 
@@ -158,25 +208,3 @@ if __name__ == '__main__':
     result.bind("<Return>", add_FO)
 
     window.mainloop()
-
-    # zone_var = ZONE_MAPPING[zone.get()]
-    # # ask for opponents centers
-    # ops = input("Add opponents centers #'s followed by a space:\n")
-    # ops_nums = ops.split(" ")
-    #
-    # # add opps centers #s into our vs for each of our guys
-    # for key in HUSKIES:
-    #     for num in ops_nums:
-    #         HUSKIES[key]["vs"][num] = {"w": 0, "l": 0}
-
-    # # faceoff time
-    # zone = input("What zone (1-9)?\n")
-    # husky = input("What Husky?\n")
-    # other_guy = input("What opp center?\n")
-    # result = input("Result (W/L)?\n")
-
-    # # adding stats
-    # # TODO: Add try block
-    # HUSKIES[husky]["vs"][other_guy][result] += 1
-    # mapped_zone = ZONE_MAPPING[zone]
-    # HUSKIES[husky]["zone"][mapped_zone][result] += 1
