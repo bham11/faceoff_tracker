@@ -85,6 +85,10 @@ if __name__ == '__main__':
             stats_log.insert("1.0", f"{data.to_markdown()}\n")
 
 
+    def map_dict_to_zone_list(dict):
+        pass
+
+
     def display_percentage():
         center_list = ['10', '27', '29', '7', '15']
         if not str(look_up.get()) in HUSKIES.keys():
@@ -95,12 +99,35 @@ if __name__ == '__main__':
 
         else:
             # each guys zone percentage on the same table. specific columns and rows
-            data = pd.DataFrame(data=HUSKIES[look_up.get()])
-            for key in HUSKIES[look_up.get()]["vs"]:
-                data = data.drop(key, axis=0)
-            data = data.drop('vs', axis=1)
-            data = data.applymap(lambda perc: str(perc * 100) + '%')
-            stats_log.delete("1.0", END)
+            zone_list = ["LD",
+                         "RD",
+                         "RO",
+                         "LO",
+                         "C",
+                         "LDNZ",
+                         "RDNZ",
+                         "LONZ",
+                         "RONZ"
+                         ]
+            percentage_cols = ["Player", "LD",
+                               "RD",
+                               "RO",
+                               "LO",
+                               "C",
+                               "LDNZ",
+                               "RDNZ",
+                               "LONZ",
+                               "RONZ"
+                               ]
+            data = pd.DataFrame(columns=percentage_cols)
+            for player in HUSKIES.keys():
+                to_add = [player] + [HUSKIES[player]["zone%"][k] for k in zone_list]
+                # stats_log.insert("1.0", f"{to_add}\n")
+                data.loc[len(data)] = to_add
+            data = data.reset_index(drop=True)
+            # data = data.drop('vs', axis=1)
+            # data = data.applymap(lambda perc: str(perc * 100) + '%')
+            # stats_log.delete("1.0", END)
             stats_log.insert("1.0", f"{data.to_markdown()}\n")
 
 
