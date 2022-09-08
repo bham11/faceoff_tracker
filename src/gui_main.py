@@ -90,45 +90,40 @@ if __name__ == '__main__':
 
 
     def display_percentage():
-        center_list = ['10', '27', '29', '7', '15']
-        if not str(look_up.get()) in HUSKIES.keys():
-            stats_log.insert("1.0", "Please input a valid husky\n")
-            look_up.delete(0, END)
-            stats_log.delete("2.0", END)
-            look_up.focus()
-
-        else:
-            # each guys zone percentage on the same table. specific columns and rows
-            zone_list = ["LD",
-                         "RD",
-                         "RO",
-                         "LO",
-                         "C",
-                         "LDNZ",
-                         "RDNZ",
-                         "LONZ",
-                         "RONZ"
-                         ]
-            percentage_cols = ["Player", "LD",
-                               "RD",
-                               "RO",
-                               "LO",
-                               "C",
-                               "LDNZ",
-                               "RDNZ",
-                               "LONZ",
-                               "RONZ"
-                               ]
-            data = pd.DataFrame(columns=percentage_cols)
-            for player in HUSKIES.keys():
-                to_add = [player] + [HUSKIES[player]["zone%"][k] for k in zone_list]
-                # stats_log.insert("1.0", f"{to_add}\n")
-                data.loc[len(data)] = to_add
-            data = data.reset_index(drop=True)
-            # data = data.drop('vs', axis=1)
-            data = data.applymap(lambda perc: str(perc * 100) + '%')
-            stats_log.delete("1.0", END)
-            stats_log.insert("1.0", f"{data.to_markdown(index=False)}\n")
+        # each guys zone percentage on the same table. specific columns and rows
+        zone_list = ["LD",
+                     "RD",
+                     "RO",
+                     "LO",
+                     "C",
+                     "LDNZ",
+                     "RDNZ",
+                     "LONZ",
+                     "RONZ"
+                     ]
+        percentage_cols = ["Player", "LD",
+                           "RD",
+                           "RO",
+                           "LO",
+                           "C",
+                           "LDNZ",
+                           "RDNZ",
+                           "LONZ",
+                           "RONZ"
+                           ]
+        data = pd.DataFrame(columns=percentage_cols)
+        for player in HUSKIES.keys():
+            to_add = [player] + [HUSKIES[player]["zone%"][k] for k in zone_list]
+            # stats_log.insert("1.0", f"{to_add}\n")
+            data.loc[len(data)] = to_add
+        data = data.reset_index(drop=True)
+        # data = data.drop('vs', axis=1)
+        # data = data.applymap(lambda perc: str(perc * 100) + '%')
+        for dc in data:
+            if dc != "Player":
+                data[dc] = data[dc].apply(lambda perc: str(perc * 100) + '%')
+        stats_log.delete("1.0", END)
+        stats_log.insert("1.0", f"{data.to_markdown(index=False)}\n")
 
 
     # look_up.bind("<Enter>", display_stats)

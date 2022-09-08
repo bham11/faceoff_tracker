@@ -3,6 +3,8 @@ HUSKIES = {
 }
 
 example_huskies = {
+    # period objects
+    # PP vs SH in zone% have 3 different feeder objects of pp sh and es
     "27": {
         "vs": {
 
