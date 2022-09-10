@@ -3,6 +3,8 @@ from tkinter import END, BOTTOM, NONE
 
 import pandas as pd
 import sqlalchemy
+from pandas.io import sql
+from sqlalchemy import select, column
 
 from src.faceoff_data import ZONE_MAPPING, HUSKIES
 from PIL import ImageTk, Image
@@ -11,35 +13,51 @@ if __name__ == '__main__':
 
     # creating a database instance
     database_columns_csv = pd.read_csv('faceoff_data_model.csv', index_col=False)
-    database_columns_csv = database_columns_csv.reset_index(drop=True)
 
     # db engine
     engine = sqlalchemy.create_engine('sqlite:///:memory:')
 
     # storing dataframe in a table
-    database_columns_csv.to_sql('hockey_faceoff_data_table', engine)
+    hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_table', engine, index=False)
     fields = "Period,Player,Opponent,Strength,Zone,Result"
-    res1 = pd.read_sql_query(f'SELECT {fields} FROM hockey_faceoff_data_table', engine)
-    print(res1)
+    # res1 = pd.read_sql_query(f'SELECT * FROM hockey_faceoff_data_table', engine)
 
     window = tk.Tk()
     window.title("Northeastern Huskies Hockey - Faceoff Tracker")
     # Full screen
     # window.state("zoomed")
 
-    input_frame = tk.Frame()
+    # frame of the input boxs, labels and log
+    input_frame = tk.LabelFrame(text='Inputs:')
 
     what_zone = tk.Label(master=input_frame, text="What Zone (1-9)?")
-    zone = tk.Entry(master=input_frame, )
+    zone = tk.Entry(master=input_frame, width=2)
 
     what_husky = tk.Label(master=input_frame, text="What Husky?")
-    husky = tk.Entry(master=input_frame, )
+    husky = tk.Entry(master=input_frame,width=2 )
 
     what_opp = tk.Label(master=input_frame, text="What Opp?")
-    opp = tk.Entry(master=input_frame, )
+    opp = tk.Entry(master=input_frame,width=2 )
 
     ask_result = tk.Label(master=input_frame, text="Result (W/L)?")
-    result = tk.Entry(master=input_frame, )
+    result = tk.Entry(master=input_frame,width=2 )
+
+    # period and strength frame
+    per_str_frame = tk.LabelFrame(text='Options')
+
+
+    # period radio buttons, will send that period to the add_FO method upon the enter of the result
+    what_period = tk.StringVar(value="1rst")
+    first_period = tk.Radiobutton(master=per_str_frame, text="1rst", value="1rst", variable=what_period)
+    second_period = tk.Radiobutton(master=per_str_frame, text="2nd", value="2nd", variable=what_period)
+    third_period = tk.Radiobutton(master=per_str_frame, text="3rd", value="3rd", variable=what_period)
+    ot = tk.Radiobutton(master=per_str_frame, text="OT", value="OT", variable=what_period)
+
+    # strength radio buttons, will send that strength to the add_Fo method upon enter of the result
+    strength = tk.StringVar(value="even")
+    even = tk.Radiobutton(master=per_str_frame, text="Even", value="even", variable=strength)
+    pk = tk.Radiobutton(master=per_str_frame, text="PK", value="pk", variable=strength)
+    pp = tk.Radiobutton(master=per_str_frame, text="PP", value="pp", variable=strength)
 
 
     def clear_ents():
@@ -52,21 +70,28 @@ if __name__ == '__main__':
 
     clear_entries = tk.Button(master=input_frame, text="Clear", command=clear_ents)
 
-    log = tk.Text(master=input_frame)
+    log = tk.Text(master=input_frame,width=40)
 
     # packing input widgets and frame
-    what_zone.pack()
-    zone.pack()
-    what_husky.pack()
-    husky.pack()
-    what_opp.pack()
-    opp.pack()
-    ask_result.pack()
-    result.pack()
-    clear_entries.pack()
-    log.pack()
+    first_period.grid(row=0,column=1)
+    second_period.grid(row=0,column=3)
+    third_period.grid(row=0,column=5)
+    ot.grid(row=0,column=7)
+    even.grid(row=1,column=2)
+    pp.grid(row=1,column=4)
+    pk.grid(row=1,column=6)
+    what_zone.grid(row=2,column=3)
+    zone.grid(row=2,column=4)
+    what_husky.grid(row=3,column=3)
+    husky.grid(row=3,column=4)
+    what_opp.grid(row=4,column=3)
+    opp.grid(row=4,column=4)
+    ask_result.grid(row=5,column=3)
+    result.grid(row=5,column=4)
+    clear_entries.grid(row=6,column=4)
+    log.grid(row=7,column=4)
 
-    input_frame.pack(side="right")
+
 
     # rink photo for zone clues
     rink_frame = tk.Frame()
@@ -82,7 +107,7 @@ if __name__ == '__main__':
 
     rink_photo.pack()
     second_rink_photo.pack()
-    rink_frame.pack(side="top")
+
 
     # stats frame and widgets
     stats_frame = tk.Frame()
@@ -97,7 +122,13 @@ if __name__ == '__main__':
 
 
     def display_percentage():
-        pass
+        wins = 'SELECT  count(result) FROM hockey_faceoff_data_table WHERE result="w"  ' \
+               'GROUP BY Player,zone'
+        totals = 'SELECT count(result) FROM hockey_faceoff_data_table GROUP BY Player,zone '
+
+
+        query = f'SELECT ({wins}) / ({totals}) FROM hockey_faceoff_data_table GROUP BY Player,zone'
+        print(pd.read_sql_query(wins, engine))
 
 
     # look_up.bind("<Enter>", display_stats)
@@ -111,8 +142,15 @@ if __name__ == '__main__':
     stats_log.pack()
     slog_scrollbar.pack(side=BOTTOM, fill='x')
     slog_scrollbar.config(command=stats_log.xview)
-    stats_frame.pack(side="left")
 
+    # packing frames
+    per_str_frame.pack(side='top', ipady=10)
+    rink_frame.pack(side='left', fill='both')
+    input_frame.pack(side='left', fill='both')
+    stats_frame.pack(side='left',fill='both')
+
+
+    # focusing on inputs
     zone.focus()
 
 
@@ -145,11 +183,20 @@ if __name__ == '__main__':
             result.focus()
 
 
+    index = 0
+
+
     def add_FO(e):
         # use csv as rdb to add this faceoff as a single entry with
         # period, player, opp, str, zone(mapped), result
 
         formatted_zone = ZONE_MAPPING[zone.get()]
+        sql.execute('INSERT INTO hockey_faceoff_data_table VALUES(?,?,?,?,?,?)', engine,
+                    params=[(what_period.get(), husky.get(), opp.get(), strength.get(), formatted_zone, result.get())])
+        # print(pd.read_sql_query(f'SELECT * FROM hockey_faceoff_data_table', engine))
+        # query = 'SELECT  player, count(result) AS "wins", zone FROM hockey_faceoff_data_table
+        # WHERE result="w"  GROUP BY Player, Zone '
+        # print(pd.read_sql_query(query, engine))
 
         log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
 
