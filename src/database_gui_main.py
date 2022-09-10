@@ -129,9 +129,10 @@ if __name__ == '__main__':
 
         query = f'SELECT ({wins}) / ({totals}) FROM hockey_faceoff_data_table GROUP BY Player,zone'
 
-        q2 = 'SELECT CAST(count(result) FILTER(WHERE result = "w") / CAST(count(result) AS FLOAT) * 100 AS varchar) || "%" AS "FO%", ' \
-             'Player FROM hockey_faceoff_data_table GROUP BY Player'
-        print(pd.read_sql_query(q2, engine))
+        q2 = 'SELECT Player, zone, CAST(count(result) FILTER(WHERE result = "w") / CAST(count(result) AS FLOAT) * 100 AS varchar) ' \
+             '|| "%" AS "FO%" FROM hockey_faceoff_data_table GROUP BY Player,zone'
+        stats_log.delete("1.0", END)
+        stats_log.insert("1.0",pd.read_sql_query(q2, engine).to_markdown(index=False))
 
 
     # look_up.bind("<Enter>", display_stats)
@@ -193,15 +194,23 @@ if __name__ == '__main__':
         # use csv as rdb to add this faceoff as a single entry with
         # period, player, opp, str, zone(mapped), result
 
+        period_map = {
+            "1rst": "P1",
+            "2nd": "P2",
+            "3rd": "P3",
+            "OT": "OT"
+        }
+        formatted_period = period_map[what_period.get()]
         formatted_zone = ZONE_MAPPING[zone.get()]
         sql.execute('INSERT INTO hockey_faceoff_data_table VALUES(?,?,?,?,?,?)', engine,
-                    params=[(what_period.get(), husky.get(), opp.get(), strength.get(), formatted_zone, result.get())])
+                    params=[(what_period.get(), husky.get(), opp.get(), strength.get(),
+                             formatted_zone, result.get().lower())])
         # print(pd.read_sql_query(f'SELECT * FROM hockey_faceoff_data_table', engine))
         # query = 'SELECT  player, count(result) AS "wins", zone FROM hockey_faceoff_data_table
         # WHERE result="w"  GROUP BY Player, Zone '
         # print(pd.read_sql_query(query, engine))
 
-        log.insert("1.0", f"{husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
+        log.insert("1.0", f"{formatted_period}: {husky.get()} vs {opp.get()} in zone {formatted_zone}: {result.get()}\n")
 
         clear_ents()
 
