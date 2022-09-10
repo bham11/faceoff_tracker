@@ -128,7 +128,10 @@ if __name__ == '__main__':
 
 
         query = f'SELECT ({wins}) / ({totals}) FROM hockey_faceoff_data_table GROUP BY Player,zone'
-        print(pd.read_sql_query(wins, engine))
+
+        q2 = 'SELECT CAST(count(result) FILTER(WHERE result = "w") / CAST(count(result) AS FLOAT) * 100 AS varchar) || "%" AS "FO%", ' \
+             'Player FROM hockey_faceoff_data_table GROUP BY Player'
+        print(pd.read_sql_query(q2, engine))
 
 
     # look_up.bind("<Enter>", display_stats)
