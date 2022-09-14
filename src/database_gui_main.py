@@ -5,10 +5,21 @@ import pandas as pd
 import sqlalchemy
 import tkinter.scrolledtext as tkscrolled
 from pandas.io import sql
-from sqlalchemy import select, column
 
-from src.faceoff_data import ZONE_MAPPING
 from PIL import ImageTk, Image
+
+ZONE_MAPPING = {
+    "1": "LO",
+    "2": "RO",
+    "3": "LONZ",
+    "4": "RONZ",
+    "5": "C",
+    "6": "LDNZ",
+    "7": "RDNZ",
+    "8": "LD",
+    "9": "RD"
+
+}
 
 
 def add_filter_to_list(filter_list, filter):
@@ -123,6 +134,7 @@ if __name__ == '__main__':
 
     ask_result = tk.Label(master=input_frame, text="Result (W/L)?")
     result = tk.Entry(master=input_frame, width=2)
+
 
     # clear button input frame
     def clear_ents():
@@ -245,7 +257,7 @@ if __name__ == '__main__':
     what_zone.grid(row=6, column=0)
     zone_up.grid(row=6, column=1)
     run_query.grid(row=7, column=1)
-    run_db_log.grid(row=7,column=2)
+    run_db_log.grid(row=7, column=2)
     stats_log.grid(row=8, columnspan=5)
 
     # packing frames
