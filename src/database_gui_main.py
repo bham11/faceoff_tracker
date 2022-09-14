@@ -17,29 +17,55 @@ def add_filter_to_list(filter_list, filter):
     else:
         filter_list = filter_list + " AND " + filter
     return filter_list
-def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
-    # f'SELECT Player, zone, CAST(count(result) FILTER(WHERE result = "w" and period = "{per}" ) AS varchar) || "/" || ' \
-    # f'CAST(count(result) FILTER(WHERE period = "{per}" ) AS varchar) AS "FO%" FROM hockey_faceoff_data_table GROUP BY Player,zone'
-    query = 'Select Player, Opponent, CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
-            f'CAST(count(result) AS varchar) AS "FO%" '
+
+
+def build_hockey_query_db(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
+    query = 'Select * From hockey_faceoff_data_table'
+    # group_bys = " GROUP BY Player"
     filters = ''
-    sql_query = 'SELECT '
     if husky != "":
         filters = add_filter_to_list(filters, f"Player= {husky}")
     if opp != "":
         filters = add_filter_to_list(filters, f"Opponent= {opp}")
     if zone != "":
+        # group_bys = group_bys + ", Zone"
         filters = add_filter_to_list(filters, f"Zone= '{zone}'")
     if period != "all per":
-        filters = add_filter_to_list(filters, f"Period= '{period}")
+        filters = add_filter_to_list(filters, f"Period= '{period}'")
     if strength != "all str":
         filters = add_filter_to_list(filters, f"Strength= '{strength}'")
+    # adding table to end of query
     if len(filters) > 0:
         query = "{0} WHERE {1}".format(query, filters)
+    return query
 
-    group_bys = " GROUP BY Player,zone"
+
+def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
+    query = 'Select Player'
+    fo_percetnage_query = ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
+                          f'CAST(count(result) AS varchar) AS "FO%"'
+    group_bys = " GROUP BY Player"
     table = " FROM hockey_faceoff_data_table"
-    return query + table + group_bys
+    filters = ''
+    sql_query = 'SELECT '
+    if husky != "":
+        filters = add_filter_to_list(filters, f"Player= {husky}")
+    if opp != "":
+        query = query + ", Opponent"
+        filters = add_filter_to_list(filters, f"Opponent= {opp}")
+    if zone != "":
+        group_bys = group_bys + ", Zone"
+        query = query + ", Zone"
+        filters = add_filter_to_list(filters, f"Zone= '{zone}'")
+    if period != "all per":
+        filters = add_filter_to_list(filters, f"Period= '{period}'")
+    if strength != "all str":
+        filters = add_filter_to_list(filters, f"Strength= '{strength}'")
+    # adding table to end of query
+    query = query + fo_percetnage_query + table
+    if len(filters) > 0:
+        query = "{0} WHERE {1}".format(query, filters)
+    return query + group_bys
 
 
 if __name__ == '__main__':
@@ -97,7 +123,6 @@ if __name__ == '__main__':
 
     ask_result = tk.Label(master=input_frame, text="Result (W/L)?")
     result = tk.Entry(master=input_frame, width=2)
-
 
     # clear button input frame
     def clear_ents():
@@ -174,7 +199,6 @@ if __name__ == '__main__':
         if zone_up.get() != "":
             zone_val = ZONE_MAPPING[zone_up.get()]
         opp_val = opp_look_up.get()
-        print(opp_val)# def mapInput(....get()) -> turns '' to none, validates input and returns valid inputs
         # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
         query = build_hockey_query(table_name='hockey_faceoff_data_table', husky=husky_val,
                                    opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
@@ -183,7 +207,24 @@ if __name__ == '__main__':
         stats_log.insert("1.0", display_table.to_markdown(index=False))
 
 
+    def display_database():
+        per_val = filter_periods.get()
+        strength_val = filter_strength.get()
+        husky_val = look_up.get()
+        zone_val = zone_up.get()
+        if zone_up.get() != "":
+            zone_val = ZONE_MAPPING[zone_up.get()]
+        opp_val = opp_look_up.get()
+        # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
+        query = build_hockey_query_db(table_name='hockey_faceoff_data_table', husky=husky_val,
+                                      opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
+        stats_log.delete("1.0", END)
+        display_table = pd.read_sql_query(query, engine)
+        stats_log.insert("1.0", display_table.to_markdown(index=False))
+
+
     run_query = tk.Button(master=stats_frame, text="Run", command=display_query)
+    run_db_log = tk.Button(master=stats_frame, text="Run Log", command=display_database)
 
     # option buttons on stat frame packing
     filter_all_periods.grid(row=0, column=0)
@@ -204,6 +245,7 @@ if __name__ == '__main__':
     what_zone.grid(row=6, column=0)
     zone_up.grid(row=6, column=1)
     run_query.grid(row=7, column=1)
+    run_db_log.grid(row=7,column=2)
     stats_log.grid(row=8, columnspan=5)
 
     # packing frames
