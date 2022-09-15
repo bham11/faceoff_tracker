@@ -78,11 +78,17 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
         query = "{0} WHERE {1}".format(query, filters)
     return query + group_bys
 
+ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey'
+DB_TEMP_PATH = f'{ROOT}/faceoff_tracker/src/faceoff_data_model.csv'
+FIRST_THIRD_RINK = f'{ROOT}/faceoff_tracker/src/hori_hockey_rink.png'
+SECOND_RINK = f'{ROOT}/faceoff_tracker/src/second_period_rink.png'
 
 if __name__ == '__main__':
 
     # creating a dataframe instance
-    database_columns_csv = pd.read_csv('faceoff_data_model.csv', index_col=False)
+    database_columns_csv = pd.read_csv(
+        DB_TEMP_PATH,
+        index_col=False)
 
     # db engine
     engine = sqlalchemy.create_engine('sqlite:///:memory:')
@@ -163,12 +169,12 @@ if __name__ == '__main__':
 
     # rink photo for zone clues
     rink_frame = tk.LabelFrame(text="Rink Mappings")
-    photo = Image.open("hori_hockey_rink.png")
+    photo = Image.open(FIRST_THIRD_RINK)
     re_sized_photo = photo.resize((500, 200))
     hockey_rink = ImageTk.PhotoImage(re_sized_photo)
     rink_photo = tk.Label(master=rink_frame, image=hockey_rink)
 
-    sec_photo = Image.open("second_period_rink.png").resize((500, 200))
+    sec_photo = Image.open(SECOND_RINK).resize((500, 200))
     second_rink = ImageTk.PhotoImage(sec_photo)
 
     second_rink_photo = tk.Label(master=rink_frame, image=second_rink)
