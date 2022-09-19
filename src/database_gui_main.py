@@ -334,10 +334,9 @@ if __name__ == '__main__':
 
         # if opp is "" / none then go for all opps
         if result.get().upper() not in ['W', 'L']:
-            log.delete("1.0", END)
             log.insert("1.0", "Please input a valid result: W , L \n")
-            zone_up.delete(0, END)
-            zone_up.focus()
+            result.delete(0, END)
+            result.focus()
         else:
             period_map = {
                 "1rst": "P1",
