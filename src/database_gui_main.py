@@ -9,10 +9,10 @@ from pandas.io import sql
 from PIL import ImageTk, Image
 
 ZONE_MAPPING = {
-    "1": "LO",
-    "2": "RO",
-    "3": "LONZ",
-    "4": "RONZ",
+    "1": "RO",
+    "2": "LO",
+    "3": "RONZ",
+    "4": "LONZ",
     "5": "C",
     "6": "LDNZ",
     "7": "RDNZ",
@@ -80,7 +80,7 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
 
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey'
 DB_TEMP_PATH = f'{ROOT}/faceoff_tracker/src/faceoff_data_model.csv'
-FIRST_THIRD_RINK = f'{ROOT}/faceoff_tracker/src/hori_hockey_rink.png'
+FIRST_THIRD_RINK = f'{ROOT}/faceoff_tracker/src/first_and_third_rink.png'
 SECOND_RINK = f'{ROOT}/faceoff_tracker/src/second_period_rink.png'
 
 if __name__ == '__main__':
