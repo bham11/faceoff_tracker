@@ -21,6 +21,8 @@ ZONE_MAPPING = {
 
 }
 
+ZONE_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
 
 def add_filter_to_list(filter_list, filter):
     if len(filter_list) == 0:
@@ -31,8 +33,7 @@ def add_filter_to_list(filter_list, filter):
 
 
 def build_hockey_query_db(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
-    query = 'Select * From hockey_faceoff_data_table'
-    # group_bys = " GROUP BY Player"
+    query = f'Select * From {table_name}'
     filters = ''
     if husky != "":
         filters = add_filter_to_list(filters, f"Player= {husky}")
@@ -56,9 +57,8 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
     fo_percetnage_query = ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
                           f'CAST(count(result) AS varchar) AS "FO%"'
     group_bys = " GROUP BY Player"
-    table = " FROM hockey_faceoff_data_table"
+    table = f" FROM {table_name}"
     filters = ''
-    sql_query = 'SELECT '
     if husky != "":
         filters = add_filter_to_list(filters, f"Player= {husky}")
     if opp != "":
@@ -78,7 +78,9 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
         query = "{0} WHERE {1}".format(query, filters)
     return query + group_bys
 
+
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey'
+PATH_TO_DESKTOP= '/Users/brandonhampstead/Desktop/'
 DB_TEMP_PATH = f'{ROOT}/faceoff_tracker/src/faceoff_data_model.csv'
 FIRST_THIRD_RINK = f'{ROOT}/faceoff_tracker/src/first_and_third_rink.png'
 SECOND_RINK = f'{ROOT}/faceoff_tracker/src/second_period_rink.png'
@@ -95,6 +97,9 @@ if __name__ == '__main__':
 
     # storing dataframe in a table
     hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_table', engine, index=False)
+
+    # variable to save a possible stats dataframe to export to excel
+    df_to_export = pd.DataFrame()
 
     # creating tinker window
     window = tk.Tk()
@@ -209,20 +214,35 @@ if __name__ == '__main__':
                                           variable=filter_strength)
 
 
+    def valid_stats_zone(z):
+        if z != "":
+            if z not in ZONE_LIST:
+                zone_up.delete(0, END)
+                zone_up.focus()
+            else:
+                return ZONE_MAPPING[z]
+        else:
+            return zone_up.get()
+
+
     def display_query():
         per_val = filter_periods.get()
         strength_val = filter_strength.get()
         husky_val = look_up.get()
-        zone_val = zone_up.get()
-        if zone_up.get() != "":
-            zone_val = ZONE_MAPPING[zone_up.get()]
         opp_val = opp_look_up.get()
+        zone_val = valid_stats_zone(zone_up.get())
+        # if zone_up.get() != "":
+        #     zone_val =ZONE_MAPPING[zone_up.get()]
+
         # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
         query = build_hockey_query(table_name='hockey_faceoff_data_table', husky=husky_val,
                                    opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
         stats_log.delete("1.0", END)
         display_table = pd.read_sql_query(query, engine)
         stats_log.insert("1.0", display_table.to_markdown(index=False))
+        return display_table
+
+
 
 
     def display_database():
@@ -238,11 +258,23 @@ if __name__ == '__main__':
                                       opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
         stats_log.delete("1.0", END)
         display_table = pd.read_sql_query(query, engine)
+
         stats_log.insert("1.0", display_table.to_markdown(index=False))
+        return display_table
+
+
+    def save_query_to_csv():
+        display_query().to_csv(f'{PATH_TO_DESKTOP}query_output.csv',index=False)
+
+    def save_db_log_to_csv():
+        display_database().to_csv(f'{PATH_TO_DESKTOP}log_output.csv',index=False)
 
 
     run_query = tk.Button(master=stats_frame, text="Run", command=display_query)
     run_db_log = tk.Button(master=stats_frame, text="Run Log", command=display_database)
+    save_cur_query = tk.Button(master=stats_frame, text='Save Query', command=save_query_to_csv)
+    save_cur_db = tk.Button(master=stats_frame,text= "Save Log", command=save_db_log_to_csv)
+
 
     # option buttons on stat frame packing
     filter_all_periods.grid(row=0, column=0)
@@ -262,9 +294,12 @@ if __name__ == '__main__':
     opp_look_up.grid(row=5, column=1)
     what_zone.grid(row=6, column=0)
     zone_up.grid(row=6, column=1)
-    run_query.grid(row=7, column=1)
-    run_db_log.grid(row=7, column=2)
+    run_query.grid(row=7, column=0)
+    run_db_log.grid(row=7, column=1)
     stats_log.grid(row=8, columnspan=5)
+    save_cur_query.grid(row=7,column=2)
+    save_cur_db.grid(row=7, column=3)
+
 
     # packing frames
     per_str_frame.pack(side='top', ipady=10)
@@ -277,8 +312,8 @@ if __name__ == '__main__':
 
 
     def valid_zone(e):
-        zone_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        if zone.get() not in zone_list:
+
+        if zone.get() not in ZONE_LIST:
             log.insert("1.0", "Please input a valid zone: 1-9\n")
             zone.delete(0, END)
             zone.focus()
@@ -287,7 +322,6 @@ if __name__ == '__main__':
 
 
     def valid_husky(e):
-        center_list = ['10', '27', '29', '7', '15']
         if not husky.get().isdigit():
             log.insert("1.0", "Please input a valid husky jersey\n")
             husky.delete(0, END)
@@ -306,26 +340,21 @@ if __name__ == '__main__':
 
 
     def valid_stats_frame_husky(e):
-        # should be a valid husky in the 'Player' column of the database,
-        # if not clear field and output error in stats log if it is, then focus on the opp_lookup
-        pass
+        if not look_up.get().isdigit() and not look_up.get() == "":
+            stats_log.insert("1.0", "Please input a valid husky jersey\n")
+            look_up.delete(0, END)
+            look_up.focus()
+        else:
+            opp_look_up.focus()
 
 
     def valid_stats_frame_opp(e):
-        # should be a valid husky in the 'opp' column of the database,
-        # if not clear field and output error in stats log if it is, then focus on the opp_lookup
-        pass
-
-
-    def valid_stats_frame_zone(e):
-        zone_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        if zone.get() not in zone_list:
-            stats_log.delete("1.0", END)
-            stats_log.insert("1.0", "Please input a valid zone: 1-9\n")
-            zone_up.delete(0, END)
-            zone_up.focus()
+        if not opp_look_up.get().isdigit() and not opp_look_up.get() == "":
+            stats_log.insert("1.0", "Please input a valid opponent jersey number\n")
+            opp_look_up.delete(0, END)
+            opp_look_up.focus()
         else:
-            husky.focus()
+            zone_up.focus()
 
 
     def add_FO(e):
