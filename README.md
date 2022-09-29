@@ -9,6 +9,7 @@ By: Brandon Hampstead
 2. Go into the terminal, navigate (using "cd") to where you placed the "faceoff_tracker" folder on your computer
 3. Once in the faceoff_tracker" folder, type <code> open src/database_gui_main.py</code> and the file will open.
    - At this point find line 81 and change the <code> ROOT</code> variable to the local path to that folder on your computer, make sure to save this 
+   - Make sure to change <code> PATH_TO_DESKTOP </code> variable to your desktop as well, since this is where the output files will be saved
 ## <ins> Average Startup <ins>
 1. This program comes equipped with a <code>makefile</code> to setup the venv and run the program from the command line
 2. First run <code>make venv</code> to create the virutal enviroment
