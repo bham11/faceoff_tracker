@@ -18,5 +18,15 @@ By: Brandon Hampstead
 
 ## <ins> Capturing Face Off data <ins>
 - This program is broken into mainly two parts, or windows:
-  - The Inputs frame and options frame: this is where you input faceoff data. Make sure the period and ice strength around updated by clicking the radio buttons accordingly
+  - The Inputs frame and options frame: this is where you input faceoff data. Make sure the period and ice strength around updated by clicking the radio buttons accordingly. 
+    - Input the zone (1-9 mapped from the pictures to the left of the Inputs Frame) and hit enter. 
+    - Then input the jersey number of the Husky that is taking the faceoff and hit enter. 
+    - Then input the jersey number of the Opponent that took the faceoff and hit enter. 
+    - Finally, input W or L depending if our guy won the draw.
+  - The Stats frame has period and strength options to specify what type of face offs you want to select from.
+    - If you want to select from all face off data, leave the "All Periods" and "All Strengths" radio buttons selected.
+    - There are text boxes to specify which Husky, which zone, and which Opponent to "filter on"
+    - Hit the <code> Run</code> button to see the Wins/Totals for the based of the selected parameters. 
+    - Hit the <code> Run Log</code> button to see the Logsfor the based of the selected parameters.
+  - You can save both the log and the current query to your desktop with the Save buttons on the pane.
 
