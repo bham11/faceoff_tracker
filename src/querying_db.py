@@ -15,9 +15,10 @@ engine = sqlalchemy.create_engine('sqlite:///:memory:')
 # storing dataframe in a table
 hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_table', engine, index=False)
 
-query = 'SELECT Player, Opponent, CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
-                          f'CAST(count(result) AS varchar) AS "FO%"   FROM hockey_faceoff_data_table ' \
-        f'GROUP BY Player, Opponent'
+wins_div_loss = 'CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
+                          f'CAST(count(result) AS varchar) AS "FO%"'
+
+query = f'SELECT Player, Opponent,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player,Opponent'
 
 
 display_table = pd.read_sql_query(query, engine)
