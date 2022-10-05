@@ -1,8 +1,8 @@
 import pandas as pd
 import sqlalchemy
 
-DB_PATH = "/Users/brandonhampstead/Library/CloudStorage/OneDrive-" \
-          "NortheasternUniversity/Hockey Ops/2022-23 Season/2022-2023 FO Stats/vsLIU_log.csv"
+DB_PATH = "/Users/brandonhampstead/Library/CloudStorage/OneDrive-NortheasternUniversity" \
+          "/Hockey Ops/2022-23 Season/2022-2023 FO Stats/LIU/Game 1/vsLIU_log.csv"
 
 PATH_TO_DESKTOP ='/Users/brandonhampstead/Desktop/'
 
@@ -18,7 +18,7 @@ hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_tab
 wins_div_loss = 'CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
                           f'CAST(count(result) AS varchar) AS "FO%"'
 
-query = f'SELECT Player, Opponent,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player,Opponent'
+query = f'SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone'
 
 
 display_table = pd.read_sql_query(query, engine)
