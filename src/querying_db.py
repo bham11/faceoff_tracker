@@ -5,6 +5,8 @@ ONE_DRIVE_PATH = "/Users/brandonhampstead/Library/CloudStorage/OneDrive-Northeas
                  "/Hockey Ops/2022-23 Season/2022-2023 FO Stats/"
 OPPONENT_GAME_LOG = "LIU/Game 1/vsLIU_log.csv"
 
+#DB_PATH = '/Users/sammy/Desktop/vsUVM_GM1.csv'
+
 PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 
 FULL_DB_PATH = ONE_DRIVE_PATH + OPPONENT_GAME_LOG
@@ -30,6 +32,8 @@ player_by_zone_query = f'SELECT Player, Zone, {wins_div_loss} FROM hockey_faceof
 player_by_opp_query = f'SELECT Player, Opponent, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Opponent'
 
 team_tots_by_zone_query = f'SELECT Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Zone'
+
+query = f'SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone'
 
 # tables for queries
 tots_by_player_table = pd.read_sql_query(totals_query, engine)
