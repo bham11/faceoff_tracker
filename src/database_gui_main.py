@@ -52,7 +52,7 @@ def build_hockey_query_db(table_name, husky: str, opp: str, period: str, strengt
     return query
 
 
-def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
+def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: str, zone: str, by_opp: str):
     query = 'Select Player'
     fo_percetnage_query = ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
                           f'CAST(count(result) AS varchar) AS "FO%"'
@@ -72,6 +72,9 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
         filters = add_filter_to_list(filters, f"Period= '{period}'")
     if strength != "all str":
         filters = add_filter_to_list(filters, f"Strength= '{strength}'")
+    if by_opp != "not op groups":
+        query = query + ", Opponent"
+        group_bys = group_bys + ", Opponent"
     # adding table to end of query
     query = query + fo_percetnage_query + table
     if len(filters) > 0:
@@ -212,6 +215,9 @@ if __name__ == '__main__':
     filter_pp = tk.Radiobutton(master=stats_frame, text="PP", value="pp", variable=filter_strength)
     filter_all_strengths = tk.Radiobutton(master=stats_frame, text="All Strs", value="all str",
                                           variable=filter_strength)
+    give_all_ops = tk.StringVar(value= 'not op groups')
+    by_all_ops = tk.Radiobutton(master=stats_frame, text= "By All Ops", value= 'by_all_ops', variable= give_all_ops)
+    default_by_ops = tk.Radiobutton(master=stats_frame, text="Normal Ops", value='not op groups', variable=give_all_ops)
 
 
     def valid_stats_zone(z):
@@ -228,6 +234,7 @@ if __name__ == '__main__':
     def display_query():
         per_val = filter_periods.get()
         strength_val = filter_strength.get()
+        by_ops_value = give_all_ops.get()
         husky_val = look_up.get()
         opp_val = opp_look_up.get()
         zone_val = valid_stats_zone(zone_up.get())
@@ -236,7 +243,8 @@ if __name__ == '__main__':
 
         # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
         query = build_hockey_query(table_name='hockey_faceoff_data_table', husky=husky_val,
-                                   opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
+                                   opp=opp_val, period=per_val, strength=strength_val, zone=zone_val,
+                                   by_opp= by_ops_value)
         stats_log.delete("1.0", END)
         display_table = pd.read_sql_query(query, engine)
         stats_log.insert("1.0", display_table.to_markdown(index=False))
@@ -287,6 +295,8 @@ if __name__ == '__main__':
     filter_even.grid(row=3, column=1)
     filter_pp.grid(row=3, column=2)
     filter_pk.grid(row=3, column=3)
+    default_by_ops.grid(row=3, column=4)
+    by_all_ops.grid(row=4, column=4)
 
     whose_stats.grid(row=4, column=0)
     look_up.grid(row=4, column=1)
