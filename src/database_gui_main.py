@@ -1,4 +1,5 @@
 import tkinter as tk
+from pathlib import Path
 from tkinter import *
 
 import pandas as pd
@@ -83,7 +84,7 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
 
 
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey'
-PATH_TO_DESKTOP= '/Users/brandonhampstead/Desktop/'
+PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 DB_TEMP_PATH = f'{ROOT}/faceoff_tracker/src/faceoff_data_model.csv'
 FIRST_THIRD_RINK = f'{ROOT}/faceoff_tracker/src/first_and_third_rink.png'
 SECOND_RINK = f'{ROOT}/faceoff_tracker/src/second_period_rink.png'
