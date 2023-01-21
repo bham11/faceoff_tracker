@@ -3,14 +3,13 @@ import sqlalchemy
 
 ONE_DRIVE_PATH = "/Users/brandonhampstead/Library/CloudStorage/OneDrive-NortheasternUniversity" \
                  "/Hockey Ops/2022-23 Season/2022-2023 FO Stats/"
-OPPONENT_GAME_LOG = "LIU/Game 1/vsLIU_log.csv"
 DESKTOP_GAME_LOG = 'log_output.csv'
 
-#DB_PATH = '/Users/sammy/Desktop/vsUVM_GM1.csv'
+
 
 PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 
-FULL_DB_PATH = ONE_DRIVE_PATH + OPPONENT_GAME_LOG
+
 FULL_DB_PATH2 = PATH_TO_DESKTOP + DESKTOP_GAME_LOG
 
 database_columns_csv = pd.read_csv(
@@ -49,11 +48,10 @@ tots_by_zone_table = pd.read_sql_query(team_tots_by_zone_query, engine)
 freestyle_table = pd.read_sql_query(freestyle_query, engine)
 
 csv_name = "totals_by_player"
-date_game_vs = "11_19_vs_BU_"
-
 if __name__ == '__main__':
-    tots_by_player_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}totals_by_player.csv', index=False)
-    player_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}player_by_zone.csv', index=False)
-    player_by_opp_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}player_by_opp.csv', index=False)
-    tots_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}team_tots_by_zone.csv', index=False)
+    date_game_vs = input("Input the date and game: ")
+    tots_by_player_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_totals_by_player.csv', index=False)
+    player_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_player_by_zone.csv', index=False)
+    player_by_opp_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_player_by_opp.csv', index=False)
+    tots_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_team_tots_by_zone.csv', index=False)
     print('Completed compiling files on desktop. Go Huskies!')
