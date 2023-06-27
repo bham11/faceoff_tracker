@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlalchemy
 from pandas.io import sql
-
+from jinja2 import *
 
 
 ZONE_MAPPING = {
@@ -46,23 +46,32 @@ class HockeyDatabase:
 
 
     def build_hockey_query_db(self,table_name, husky: str, opp: str, period: str, strength: str, zone: str):
+        filter_list = []
         query = f'Select * From {table_name}'
         filters = ''
         if husky != "":
             filters = self.add_filter_to_list(filters, f"Player= {husky}")
+            filter_list.append(f"Player= {husky}")
         if opp != "":
             filters = self.add_filter_to_list(filters, f"Opponent= {opp}")
+            filter_list.append(f"Opponent= {opp}")
         if zone != "":
             # group_bys = group_bys + ", Zone"
             filters = self.add_filter_to_list(filters, f"Zone= '{zone}'")
+            filter_list.append(f"Zone= '{zone}'")
         if period != "all per":
             filters = self.add_filter_to_list(filters, f"Period= '{period}'")
+            filter_list.append(f"Period= '{period}'")
         if strength != "all str":
             filters = self.add_filter_to_list(filters, f"Strength= '{strength}'")
+            filter_list.append(f"Strength= '{strength}'")
         # adding table to end of query
         if len(filters) > 0:
             query = "{0} WHERE {1}".format(query, filters)
-        return query
+        environment = Environment(loader=FileSystemLoader("sql_templates/"))
+        template = environment.get_template("hockey_db_query.sql")
+        sql = template.render(table_name=table_name, filters=filter_list)
+        return sql
 
 
     def build_hockey_query(self,table_name, husky: str, opp: str, period: str, strength: str, zone: str, by_opp: str):

@@ -10,7 +10,10 @@ install: venv
 
 
 run:
-	. venv/bin/activate && pip3 -V && python3 src/database_gui_main.py
+	. venv/bin/activate && pip3 -V && python3 src/v1/database_gui_main.py
+
+run-v2:
+	. venv/bin/activate && cd src/v2 pip3 -V && python3 main.py
 
 venv:
 	: # Create venv if it doesn't exist
