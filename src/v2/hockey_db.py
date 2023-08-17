@@ -2,6 +2,7 @@ import pandas as pd
 import sqlalchemy
 from pandas.io import sql
 from jinja2 import *
+import os
 
 
 ZONE_MAPPING = {
@@ -17,8 +18,11 @@ ZONE_MAPPING = {
 
 }
 
+
 ZONE_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
+ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src'
+DB_TEMP_PATH = f'{ROOT}/utils/faceoff_data_model.csv'
 PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 
 class HockeyDatabase:
@@ -110,5 +114,6 @@ class HockeyDatabase:
         sql.execute('INSERT INTO hockey_faceoff_data_table VALUES(?,?,?,?,?,?)', self.engine,
                         params=[(period, husky, opp, strength,
                                  zone, result)])
-    def save_df_to_csv(self, df):
-        df.to_csv(f'{PATH_TO_DESKTOP}query_output.csv',index=False)
+    def save_df_to_csv(self, df, path):
+        df.to_csv(os.path.join(PATH_TO_DESKTOP, f'{path}.csv') ,index=False)
+    

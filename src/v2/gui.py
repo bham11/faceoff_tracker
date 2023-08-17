@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import *
 import tkinter.scrolledtext as tkscrolled
 from PIL import ImageTk, Image
-import pandas as pd
 
 
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src'
@@ -235,7 +234,7 @@ class StatsFrame(tk.LabelFrame):
         self.run_query = tk.Button(master=self, text="Run", command=self.display_query)
         self.run_db_log = tk.Button(master=self, text="Run Log", command=self.display_database)
         self.save_cur_query = tk.Button(master=self, text='Save Query', command=self.save_query_to_csv)
-        # self.save_cur_db = tk.Button(master=self,text= "Save Log", command=self.save_db_log_to_csv)
+        self.save_cur_db = tk.Button(master=self,text= "Save Log", command=self.save_db_log_to_csv)
         
         self._pack_widgets()
         
@@ -260,7 +259,7 @@ class StatsFrame(tk.LabelFrame):
         self.run_query.grid(row=7, column=0)
         self.run_db_log.grid(row=7, column=1)
         self.save_cur_query.grid(row=7,column=2)
-        # self.save_cur_db.grid(row=7, column=3)
+        self.save_cur_db.grid(row=7, column=3)
         self.stats_log.grid(row=8, columnspan=5)
     
     def _bind_inputs(self):
@@ -330,4 +329,6 @@ class StatsFrame(tk.LabelFrame):
         return display_table
     
     def save_query_to_csv(self):
-        self.database.save_df_to_csv(self.display_query())
+        self.database.save_df_to_csv(self.display_query(), "query_output")
+    def save_db_log_to_csv(self):
+        self.database.save_df_to_csv(self.display_database(), "log_output")
