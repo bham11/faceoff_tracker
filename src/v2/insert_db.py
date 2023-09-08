@@ -70,6 +70,19 @@ def insert_game(database,team, csv_path):
     conn.commit()
     conn.close()
 
+def select_opponent_data(database, team, breakdown):
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    
+    statement = f"SELECT Period, Player, Opponent, Strength, Zone, Result FROM {team}"
+    
+    c.execute(statement)
+    
+    rows = c.fetchall()
+    
+    columns = ['Period', 'Husky', 'Opp', 'Strength', 'Zone', 'Result']
+    return pd.DataFrame(rows, columns=columns, index=None)
+
         
     
     
@@ -78,4 +91,6 @@ def insert_game(database,team, csv_path):
 if __name__ == '__main__':
     # execute_db_creation("2023-2024/hockey.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
-    pass
+    
+    select_opponent_data("2023-2024/hockey.db", "BU", "sus")
+    
