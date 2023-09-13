@@ -219,7 +219,7 @@ if __name__ == '__main__':
     by_all_ops = tk.Radiobutton(master=stats_frame, text= "By All Ops", value= 'by_all_ops', variable= give_all_ops)
     default_by_ops = tk.Radiobutton(master=stats_frame, text="Normal Ops", value='not op groups', variable=give_all_ops)
 
-
+    # to stats frame class
     def valid_stats_zone(z):
         if z != "":
             if z not in ZONE_LIST:
