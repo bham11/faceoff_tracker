@@ -19,9 +19,9 @@ class InsertDataWindow(tk.Tk):
         
     
     def _pack_frames(self):
-        self.geometry("800x500")
-        self.file_frame.grid(column=0, row=0)
-        self.query_frame.grid(column=10, row=0)
+        self.geometry("1000x500")
+        self.file_frame.grid(column=0, row=0, ipadx=10, sticky=NW)
+        self.query_frame.grid(column=15, row=0)
         
         
 
@@ -34,6 +34,7 @@ class FileFrame(tk.LabelFrame):
         self.display_file_name = tk.Entry(master=self, xscrollcommand=self.scrollbar.set)
         self.game_file_name = tk.Button(master=self, text="Select Game", command=self.get_filename)
         self.send_button = tk.Button(master=self, text="Insert Data", command=self.send_game_data)
+        
         
         
         
@@ -65,26 +66,63 @@ class QueryFrame(tk.LabelFrame):
         super().__init__(container, text= "View Opponent:")
         self.select_opponent = tk.Label(master=self, text="Select Opponent:")
         self.opponent_box = ttk.Combobox(master=self,state="readonly", values = OPPONENTS, height=5)
-        self.log_display = tkscrolled.ScrolledText(master=self, wrap='word')
+        self.log_display = tkscrolled.ScrolledText(master=self, wrap='word', )
         self.view_button = tk.Button(master=self, text="View Data", command=self.get_game_data)
+        self.group_by_opp = tk.BooleanVar(value=False)
+        self.group_by_opp_radio = tk.Radiobutton(master=self, text= "by opp", value=True, variable=self.group_by_opp)
+        self.group_by_strength = tk.BooleanVar(value=False)
+        self.group_by_strength_radio = tk.Radiobutton(master=self, text= "by strength", value=True, variable=self.group_by_strength)
+        self.group_by_period = tk.BooleanVar(value=False)
+        self.group_by_period_radio = tk.Radiobutton(master=self, text= "by period", value=True, variable=self.group_by_period)
+        self.group_by_zone = tk.BooleanVar(value=False)
+        self.group_by_zone_radio = tk.Radiobutton(master=self, text= "by zone", value=True, variable=self.group_by_zone)
         
         self._pack_widgets()
         
     def _pack_widgets(self):
-        self.select_opponent.grid(row=0,column=1)
-        self.opponent_box.grid(row=1,column=1)
-        self.view_button.grid(row=2,column=1)
-        self.log_display.grid(row=3, column=1)
+        self.select_opponent.grid(row=0,column=2)
+        self.group_by_opp_radio.grid(row=1, column=0, ipadx=18)
+        self.group_by_strength_radio.grid(row=2, column=0, ipadx=5)
+        self.group_by_period_radio.grid(row=3, column=0, ipadx=11)
+        self.group_by_zone_radio.grid(row=4, column=0, ipadx=16)
+        self.opponent_box.grid(row=2,column=2)
+        self.view_button.grid(row=3,column=2)
+        self.log_display.grid(row=7, column=2)
         
-        
-        
+    def get_add_fields(self):
+        return []  
+    
+    def get_query_params(self):
+        group_list = []
+        add_fields_list = []
+        if self.group_by_opp.get():
+            group_list.append("opponent")
+            add_fields_list.append("opponent")
+            self.group_by_opp.set(False)
+        if self.group_by_strength.get():
+            group_list.append("strength")
+            add_fields_list.append("strength")
+            self.group_by_strength.set(False)
+        if self.group_by_period.get():
+            group_list.append("period")
+            add_fields_list.append("period")
+            self.group_by_period.set(False)
+        if self.group_by_zone.get():
+            group_list.append("zone")
+            add_fields_list.append("zone")
+            self.group_by_zone.set(False)
+            
+            
+        return add_fields_list , group_list   
         
     def get_game_data(self):
         opponent = self.opponent_box.get()
-        
-        display_table = select_opponent_data("2023-2024/hockey.db", opponent, [], [])
+        add_fields, groups = self.get_query_params()
+        display_table = select_opponent_data("2023-2024/hockey.db", opponent, add_fields, groups, [])
         self.log_display.delete("1.0", END)
         self.log_display.insert("1.0", display_table.to_markdown(index=False))
+        
+        
         return display_table
         
         

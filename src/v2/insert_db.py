@@ -42,9 +42,11 @@ def insert_row(team):
     sql = render_jinja("insert_into_db.sql", **args)
     return sql
 
-def build_display_table_query(team, additional_fields, filters):
+def build_display_table_query(team, additional_fields, group_bys, filters):
+    
     args = {"team": team,
             "additional_fields": additional_fields,
+            "group_bys": group_bys,
             "filters": filters
             }
     sql = render_jinja("select_opp_results.sql", **args)
@@ -61,6 +63,7 @@ def execute_db_creation(database):
     connection.close()
 
 def insert_game(database,team, csv_path):
+    #write to a log file thr insert statement
     conn = sqlite3.connect(database)
     c = conn.cursor()
     
@@ -78,11 +81,11 @@ def insert_game(database,team, csv_path):
     conn.commit()
     conn.close()
 
-def select_opponent_data(database, team, additional_fields, filters):
+def select_opponent_data(database, team, additional_fields, group_bys, filters):
     conn = sqlite3.connect(database)
     c = conn.cursor()
     
-    c.execute(build_display_table_query(team, additional_fields, filters))
+    c.execute(build_display_table_query(team, additional_fields, group_bys,filters))
     
     rows = c.fetchall()
     columns = ['player'] + additional_fields + ['FO%']
@@ -97,5 +100,5 @@ if __name__ == '__main__':
     # execute_db_creation("2023-2024/hockey.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
     # print(build_display_table_query("BU", [], []))
-    print(select_opponent_data("2023-2024/hockey.db", "BU", ["Opponent"], ["Opponent"]))
+    print(select_opponent_data("2023-2024/hockey.db", "BC",["period"], ["period"], []))
     
