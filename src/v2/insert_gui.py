@@ -82,7 +82,7 @@ class QueryFrame(tk.LabelFrame):
     def get_game_data(self):
         opponent = self.opponent_box.get()
         
-        display_table = select_opponent_data("2023-2024/hockey.db", opponent, "this will be a selector")
+        display_table = select_opponent_data("2023-2024/hockey.db", opponent, [], [])
         self.log_display.delete("1.0", END)
         self.log_display.insert("1.0", display_table.to_markdown(index=False))
         return display_table

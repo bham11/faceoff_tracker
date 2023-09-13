@@ -9,22 +9,22 @@ PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 
 
 OPPONENTS = [
-    "Stonehill",
-    "Quinnipiac",
-    "Bentley",
-    "UNH",
-    "Merrimack",
-    "UMass",
-    "Providence",
-    "RPI",
-    "BC",
-    "Brown",
-    "BU",
-    "UVM",
-    "Maine",
-    "Harvard",
-    "UML",
-    "UConn",
+    'BC', 
+    'BU', 
+    'Bentley', 
+    'Brown', 
+    'Harvard', 
+    'Maine', 
+    'Merrimack', 
+    'Providence', 
+    'Quinnipiac', 
+    'RPI', 
+    'Stonehill', 
+    'UConn', 
+    'UML', 
+    'UMass', 
+    'UNH', 
+    'UVM'
 ]
 
 def render_jinja(template, **args):
@@ -40,6 +40,14 @@ def create_table(opponent):
 def insert_row(team):
     args = {"team": team}
     sql = render_jinja("insert_into_db.sql", **args)
+    return sql
+
+def build_display_table_query(team, additional_fields, filters):
+    args = {"team": team,
+            "additional_fields": additional_fields,
+            "filters": filters
+            }
+    sql = render_jinja("select_opp_results.sql", **args)
     return sql
 
 def execute_db_creation(database):
@@ -70,17 +78,14 @@ def insert_game(database,team, csv_path):
     conn.commit()
     conn.close()
 
-def select_opponent_data(database, team, breakdown):
+def select_opponent_data(database, team, additional_fields, filters):
     conn = sqlite3.connect(database)
     c = conn.cursor()
     
-    statement = f"SELECT Period, Player, Opponent, Strength, Zone, Result FROM {team}"
-    
-    c.execute(statement)
+    c.execute(build_display_table_query(team, additional_fields, filters))
     
     rows = c.fetchall()
-    
-    columns = ['Period', 'Husky', 'Opp', 'Strength', 'Zone', 'Result']
+    columns = ['player'] + additional_fields + ['FO%']
     return pd.DataFrame(rows, columns=columns, index=None)
 
         
@@ -91,6 +96,6 @@ def select_opponent_data(database, team, breakdown):
 if __name__ == '__main__':
     # execute_db_creation("2023-2024/hockey.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
-    
-    select_opponent_data("2023-2024/hockey.db", "BU", "sus")
+    # print(build_display_table_query("BU", [], []))
+    print(select_opponent_data("2023-2024/hockey.db", "BU", ["Opponent"], ["Opponent"]))
     

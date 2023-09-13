@@ -81,7 +81,7 @@ class HockeyDatabase:
     def build_hockey_query(self,table_name, husky: str, opp: str, period: str, strength: str, zone: str, by_opp: str):
         query = 'Select Player'
         fo_percetnage_query = ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
-                            f'CAST(count(result) AS varchar) AS "FO%"'
+                            'CAST(count(result) AS varchar) AS "FO%"'
         group_bys = " GROUP BY Player"
         table = f" FROM {table_name}"
         filters = ''
