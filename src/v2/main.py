@@ -1,5 +1,5 @@
-from gui import *
-from hockey_db import *
+from gui import HockeyWindow
+from hockey_db import HockeyDatabase
 
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src'
 DB_TEMP_PATH = f'{ROOT}/utils/faceoff_data_model.csv'

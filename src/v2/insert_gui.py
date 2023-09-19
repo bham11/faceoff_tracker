@@ -9,7 +9,7 @@ from insert_db import insert_game, OPPONENTS, select_opponent_data
 class InsertDataWindow(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Northeastern Huskies Hockey - Insert Game into Database")
+        self.title("Northeastern Huskies Hockey - Insert Game into Database 2023-2024")
         self.file_frame = FileFrame(self)
         self.query_frame = QueryFrame(self)
         
@@ -32,6 +32,7 @@ class FileFrame(tk.LabelFrame):
         self.select_opponent = tk.Label(master=self, text="Select Opponent:")
         self.scrollbar = Scrollbar(master=self, orient=HORIZONTAL)
         self.display_file_name = tk.Entry(master=self, xscrollcommand=self.scrollbar.set)
+        self.insert_filename = tk.Entry(master=self)
         self.game_file_name = tk.Button(master=self, text="Select Game", command=self.get_filename)
         self.send_button = tk.Button(master=self, text="Insert Data", command=self.send_game_data)
         
@@ -43,14 +44,23 @@ class FileFrame(tk.LabelFrame):
         
     def get_filename(self):
         value = filedialog.askopenfilename()
+        show_value = value.rsplit("/", 1)[1]
+        self.insert_filename.delete(0,END)
+        self.insert_filename.insert(0, value)
+        self.display_file_name.config(foreground="black")
         self.display_file_name.delete(0, END)
-        self.display_file_name.insert(0, value)
-        self.display_file_name.config(state=DISABLED)
+        self.display_file_name.insert(0, show_value)
+        return value
+        
         
     def send_game_data(self):
-        game_log = self.display_file_name.get()
+        # this needs to be full file name but i just want to show trucated value
+        game_log = self.insert_filename.get()
         if game_log.endswith(".csv"):
             insert_game("2023-2024/hockey.db", self.opponent_box.get(), game_log)
+            self.display_file_name.config(foreground="green")
+        else:
+            self.display_file_name.config(fg="red")
         
     def _pack_widgets(self):
         self.select_opponent.grid(row=1,column=0)
