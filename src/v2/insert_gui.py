@@ -19,7 +19,7 @@ class InsertDataWindow(tk.Tk):
         
     
     def _pack_frames(self):
-        self.geometry("1000x500")
+        self.geometry("1050x500")
         self.file_frame.grid(column=0, row=0, ipadx=10, sticky=NW)
         self.query_frame.grid(column=15, row=0)
         
@@ -74,7 +74,7 @@ class FileFrame(tk.LabelFrame):
 class QueryFrame(tk.LabelFrame):
     def __init__(self, container):
         super().__init__(container, text= "View Opponent:")
-        self.select_opponent = tk.Label(master=self, text="Select Opponent:")
+        self.select_opponent = tk.Label(master=self, text="Select Team:")
         self.opponent_box = ttk.Combobox(master=self,state="readonly", values = OPPONENTS, height=5)
         self.log_display = tkscrolled.ScrolledText(master=self, wrap='word', )
         self.view_button = tk.Button(master=self, text="View Data", command=self.get_game_data)
@@ -86,6 +86,8 @@ class QueryFrame(tk.LabelFrame):
         self.group_by_period_radio = tk.Radiobutton(master=self, text= "by period", value=True, variable=self.group_by_period)
         self.group_by_zone = tk.BooleanVar(value=False)
         self.group_by_zone_radio = tk.Radiobutton(master=self, text= "by zone", value=True, variable=self.group_by_zone)
+        self.opp_where = tk.Label(master=self, text="Select Opponent:")
+        self.opponent_input = tk.Entry(master=self, width=2)
         
         self._pack_widgets()
         
@@ -95,6 +97,8 @@ class QueryFrame(tk.LabelFrame):
         self.group_by_strength_radio.grid(row=2, column=0, ipadx=5)
         self.group_by_period_radio.grid(row=3, column=0, ipadx=11)
         self.group_by_zone_radio.grid(row=4, column=0, ipadx=16)
+        self.opp_where.grid(row=3, column=3)
+        self.opponent_input.grid(row=4, column=3)
         self.opponent_box.grid(row=2,column=2)
         self.view_button.grid(row=3,column=2)
         self.log_display.grid(row=7, column=2)
@@ -105,6 +109,7 @@ class QueryFrame(tk.LabelFrame):
     def get_query_params(self):
         group_list = []
         add_fields_list = []
+        where_filters =[]
         if self.group_by_opp.get():
             group_list.append("opponent")
             add_fields_list.append("opponent")
@@ -121,14 +126,20 @@ class QueryFrame(tk.LabelFrame):
             group_list.append("zone")
             add_fields_list.append("zone")
             self.group_by_zone.set(False)
+        if self.opponent_input.get().isdigit():
+            jersey = self.opponent_input.get()
+            add_fields_list.append("opponent")
+            where_filters.append(f"Opponent = {jersey}")
+            self.opponent_input.delete(0,END)
             
             
-        return add_fields_list , group_list   
+            
+        return add_fields_list , group_list, where_filters 
         
     def get_game_data(self):
         opponent = self.opponent_box.get()
-        add_fields, groups = self.get_query_params()
-        display_table = select_opponent_data("2023-2024/hockey.db", opponent, add_fields, groups, [])
+        add_fields, groups, filters = self.get_query_params()
+        display_table = select_opponent_data("2023-2024/hockey.db", opponent, add_fields, groups, filters)
         self.log_display.delete("1.0", END)
         self.log_display.insert("1.0", display_table.to_markdown(index=False))
         

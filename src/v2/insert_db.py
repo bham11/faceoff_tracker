@@ -113,6 +113,6 @@ if __name__ == '__main__':
     # execute_db_creation("2023-2024/hockey.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
     # print(build_display_table_query("BU", [], []))
-    # print(select_opponent_data("2023-2024/hockey.db", "BC",["period"], ["period"], []))
-    print(write_to_log("2023-2024", "BU", "log/test.csv", 23))
+    print(select_opponent_data("2023-2024/hockey.db", "Brown",["opponent"], [], ["Opponent = 32"]))
+    # print(write_to_log("2023-2024", "BU", "log/test.csv", 23))
     
