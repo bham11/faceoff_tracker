@@ -57,7 +57,7 @@ class FileFrame(tk.LabelFrame):
         # this needs to be full file name but i just want to show trucated value
         game_log = self.insert_filename.get()
         if game_log.endswith(".csv"):
-            insert_game("2023-2024/hockey.db", self.opponent_box.get(), game_log)
+            insert_game("2023-2024/production.db", self.opponent_box.get(), game_log)
             self.display_file_name.config(foreground="green")
         else:
             self.display_file_name.config(fg="red")
@@ -139,7 +139,7 @@ class QueryFrame(tk.LabelFrame):
     def get_game_data(self):
         opponent = self.opponent_box.get()
         add_fields, groups, filters = self.get_query_params()
-        display_table = select_opponent_data("2023-2024/hockey.db", opponent, add_fields, groups, filters)
+        display_table = select_opponent_data("2023-2024/production.db", opponent, add_fields, groups, filters)
         self.log_display.delete("1.0", END)
         self.log_display.insert("1.0", display_table.to_markdown(index=False))
         

@@ -110,9 +110,9 @@ def write_to_log(dir,team, csv_path:str, num_rows):
         
 
 if __name__ == '__main__':
-    # execute_db_creation("2023-2024/hockey.db")
+    execute_db_creation("2023-2024/production.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
     # print(build_display_table_query("BU", [], []))
-    print(select_opponent_data("2023-2024/hockey.db", "Brown",["opponent"], [], ["Opponent = 32"]))
+    # print(select_opponent_data("2023-2024/hockey.db", "Brown",["opponent"], [], ["Opponent = 32"]))
     # print(write_to_log("2023-2024", "BU", "log/test.csv", 23))
     
