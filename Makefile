@@ -15,6 +15,9 @@ run:
 run-v2:
 	. venv/bin/activate && cd src/v2 pip3 -V && python3 main.py
 
+run-db:
+	. venv/bin/activate && cd src/v2 pip3 -V && python3 insert_gui.py
+
 venv:
 	: # Create venv if it doesn't exist
 	test -d venv || python3 -m venv venv
