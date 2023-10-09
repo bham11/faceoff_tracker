@@ -1,0 +1,1 @@
+ 10/08/2023 00:28:01: Inserted 69 rows into Stonehill table using log_output.csv
