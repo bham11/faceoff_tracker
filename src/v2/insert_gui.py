@@ -44,12 +44,13 @@ class FileFrame(tk.LabelFrame):
         
     def get_filename(self):
         value = filedialog.askopenfilename()
-        show_value = value.rsplit("/", 1)[1]
-        self.insert_filename.delete(0,END)
-        self.insert_filename.insert(0, value)
-        self.display_file_name.config(foreground="black")
-        self.display_file_name.delete(0, END)
-        self.display_file_name.insert(0, show_value)
+        if value:
+            show_value = value.rsplit("/", 1)[1]
+            self.insert_filename.delete(0,END)
+            self.insert_filename.insert(0, value)
+            self.display_file_name.config(foreground="black")
+            self.display_file_name.delete(0, END)
+            self.display_file_name.insert(0, show_value)
         return value
         
         
