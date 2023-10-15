@@ -1,2 +1,3 @@
  10/08/2023 00:28:01: Inserted 69 rows into Stonehill table using log_output.csv
  10/10/2023 12:58:44: Inserted 72 rows into Quinnipiac table using log_output.csv
+ 10/14/2023 21:37:52: Inserted 64 rows into Bentley table using log_output.csv
