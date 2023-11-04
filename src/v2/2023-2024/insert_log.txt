@@ -3,3 +3,4 @@
  10/14/2023 21:37:52: Inserted 64 rows into Bentley table using log_output.csv
  10/26/2023 22:18:19: Inserted 48 rows into UNH table using log_output.csv
  10/31/2023 09:54:24: Inserted 51 rows into Merrimack table using 10_28_23_vs_MC.log.csv
+ 11/03/2023 23:00:10: Inserted 52 rows into UMass table using log_output1.csv
