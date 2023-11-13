@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 import tkinter.scrolledtext as tkscrolled
 from PIL import ImageTk, Image
+from datetime import date
 
 
 ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src'
@@ -331,4 +332,5 @@ class StatsFrame(tk.LabelFrame):
     def save_query_to_csv(self):
         self.database.save_df_to_csv(self.display_query(), "query_output")
     def save_db_log_to_csv(self):
-        self.database.save_df_to_csv(self.display_database(), "log_output")
+        today = date.today().strftime("%m_%d_%Y")
+        self.database.save_df_to_csv(self.display_database(), f"{today}_log_output")
