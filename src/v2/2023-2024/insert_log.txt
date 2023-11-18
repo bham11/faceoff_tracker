@@ -6,3 +6,4 @@
  11/03/2023 23:00:10: Inserted 52 rows into UMass table using log_output1.csv
  11/10/2023 21:34:51: Inserted 47 rows into Providence table using log_output.csv
  11/13/2023 11:14:25: Inserted 54 rows into Providence table using 11_11_vs_PC_log_output.csv
+ 11/18/2023 13:11:39: Inserted 43 rows into UNH table using 11_17_2023_log_output.csv
