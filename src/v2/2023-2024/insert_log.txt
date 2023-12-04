@@ -10,3 +10,4 @@
  11/25/2023 17:28:43: Inserted 52 rows into RPI table using 11_25_2023_log_output.csv
  11/26/2023 18:00:48: Inserted 55 rows into RPI table using 11_26_2023_log_output.csv
  12/01/2023 22:14:30: Inserted 67 rows into BC table using 12_01_2023_log_output.csv
+ 12/04/2023 10:26:07: Inserted 66 rows into BC table using 12_02_2023_log_output.csv
