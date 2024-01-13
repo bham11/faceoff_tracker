@@ -14,3 +14,4 @@
  12/16/2023 15:00:17: Inserted 51 rows into Brown table using 12_09_2023_log_output.csv
  01/07/2024 12:53:18: Inserted 61 rows into Quinnipiac table using 01_06_2024_log_output.csv
  01/09/2024 22:40:59: Inserted 57 rows into BU table using 01_09_2024_log_output.csv
+ 01/13/2024 17:07:45: Inserted 59 rows into UVM table using 01_12_2024_log_output.csv
