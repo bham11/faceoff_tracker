@@ -16,3 +16,4 @@
  01/09/2024 22:40:59: Inserted 57 rows into BU table using 01_09_2024_log_output.csv
  01/13/2024 17:07:45: Inserted 59 rows into UVM table using 01_12_2024_log_output.csv
  01/14/2024 22:27:32: Inserted 60 rows into UVM table using 01_13_2024_log_output.csv
+ 01/21/2024 16:12:13: Inserted 61 rows into UMass table using 01_20_2024_log_output.csv
