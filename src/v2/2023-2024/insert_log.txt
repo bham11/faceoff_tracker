@@ -19,3 +19,4 @@
  01/21/2024 16:12:13: Inserted 61 rows into UMass table using 01_20_2024_log_output.csv
  01/28/2024 14:31:55: Inserted 52 rows into Merrimack table using 01_26_2024_log_output.csv
  01/28/2024 14:32:06: Inserted 67 rows into Merrimack table using 01_27_2024_log_output.csv
+ 01/31/2024 10:50:33: Inserted 61 rows into BU table using 01_30_2024_log_output.csv
