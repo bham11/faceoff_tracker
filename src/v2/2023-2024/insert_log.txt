@@ -20,3 +20,4 @@
  01/28/2024 14:31:55: Inserted 52 rows into Merrimack table using 01_26_2024_log_output.csv
  01/28/2024 14:32:06: Inserted 67 rows into Merrimack table using 01_27_2024_log_output.csv
  01/31/2024 10:50:33: Inserted 61 rows into BU table using 01_30_2024_log_output.csv
+ 02/05/2024 10:07:35: Inserted 51 rows into Maine table using 02_02_2024_vs_Maine_log_output.csv
