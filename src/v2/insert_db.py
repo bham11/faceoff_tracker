@@ -26,7 +26,8 @@ OPPONENTS = [
     'UVM',
     'Denver',
     'Dartmouth',
-    'Alaska_Anchorage'
+    'Alaska_Anchorage',
+    'Brown'
 ]
 
 def render_jinja(template, **args):
