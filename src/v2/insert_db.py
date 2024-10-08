@@ -11,9 +11,7 @@ PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
 
 OPPONENTS = [
     'BC', 
-    'BU', 
-    'Bentley', 
-    'Brown', 
+    'BU',
     'Harvard', 
     'Maine', 
     'Merrimack', 
@@ -25,7 +23,10 @@ OPPONENTS = [
     'UML', 
     'UMass', 
     'UNH', 
-    'UVM'
+    'UVM',
+    'Denver',
+    'Dartmouth',
+    'Alaska_Anchorage'
 ]
 
 def render_jinja(template, **args):
@@ -110,7 +111,7 @@ def write_to_log(dir,team, csv_path:str, num_rows):
         
 
 if __name__ == '__main__':
-    execute_db_creation("2023-2024/production.db")
+    execute_db_creation("2024-2025/production.db")
     # insert_game("2023-2024/hockey.db", "BU", os.path.join(PATH_TO_DESKTOP, "log_output.csv"))
     # print(build_display_table_query("BU", [], []))
     # print(select_opponent_data("2023-2024/hockey.db", "Brown",["opponent"], [], ["Opponent = 32"]))
