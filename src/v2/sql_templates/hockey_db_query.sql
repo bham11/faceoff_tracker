@@ -7,3 +7,5 @@ WHERE
     {{filter}}
 {{- " AND" if not loop.last else ";" }}
 {%- endfor %}
+{%- endif %}
+
