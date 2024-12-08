@@ -1,40 +1,49 @@
 import pandas as pd
 import sqlalchemy
 
-ONE_DRIVE_PATH = "/Users/brandonhampstead/Library/CloudStorage/OneDrive-NortheasternUniversity" \
-                 "/Hockey Ops/2022-23 Season/2022-2023 FO Stats/"
-DESKTOP_GAME_LOG = 'log_output.csv'
+ONE_DRIVE_PATH = (
+    "/Users/brandonhampstead/Library/CloudStorage/OneDrive-NortheasternUniversity"
+    "/Hockey Ops/2022-23 Season/2022-2023 FO Stats/"
+)
+DESKTOP_GAME_LOG = "log_output.csv"
 
 
-
-PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
+PATH_TO_DESKTOP = "/Users/brandonhampstead/Desktop/"
 
 
 FULL_DB_PATH2 = PATH_TO_DESKTOP + DESKTOP_GAME_LOG
 
-database_columns_csv = pd.read_csv(
-    FULL_DB_PATH2,
-    index_col=False)
+database_columns_csv = pd.read_csv(FULL_DB_PATH2, index_col=False)
 # db engine
-engine = sqlalchemy.create_engine('sqlite:///:memory:')
+engine = sqlalchemy.create_engine("sqlite:///:memory:")
 
 # storing dataframe in a table
-hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_table', engine, index=False)
+hockey_faceoff_data_table = database_columns_csv.to_sql(
+    "hockey_faceoff_data_table", engine, index=False
+)
 
-wins_div_loss = 'CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
-                f'CAST(count(result) AS varchar) AS "FO%"'
+wins_div_loss = (
+    'CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || '
+    f'CAST(count(result) AS varchar) AS "FO%"'
+)
 
-freestyle_query = f'SELECT Player,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player'
+freestyle_query = (
+    f"SELECT Player,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player"
+)
 
-totals_query = f'SELECT Player,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player'
+totals_query = (
+    f"SELECT Player,{wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player"
+)
 
-player_by_zone_query = f'SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone'
+player_by_zone_query = f"SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone"
 
-player_by_opp_query = f'SELECT Player, Opponent, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Opponent'
+player_by_opp_query = f"SELECT Player, Opponent, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Opponent"
 
-team_tots_by_zone_query = f'SELECT Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Zone'
+team_tots_by_zone_query = (
+    f"SELECT Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Zone"
+)
 
-query = f'SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone'
+query = f"SELECT Player, Zone, {wins_div_loss} FROM hockey_faceoff_data_table GROUP BY Player, Zone"
 
 # tables for queries
 tots_by_player_table = pd.read_sql_query(totals_query, engine)
@@ -48,10 +57,18 @@ tots_by_zone_table = pd.read_sql_query(team_tots_by_zone_query, engine)
 freestyle_table = pd.read_sql_query(freestyle_query, engine)
 
 csv_name = "totals_by_player"
-if __name__ == '__main__':
+if __name__ == "__main__":
     date_game_vs = input("Input the date and game: ")
-    tots_by_player_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_totals_by_player.csv', index=False)
-    player_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_player_by_zone.csv', index=False)
-    player_by_opp_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_player_by_opp.csv', index=False)
-    tots_by_zone_table.to_csv(f'{PATH_TO_DESKTOP}{date_game_vs}_team_tots_by_zone.csv', index=False)
-    print('Completed compiling files on desktop. Go Huskies!')
+    tots_by_player_table.to_csv(
+        f"{PATH_TO_DESKTOP}{date_game_vs}_totals_by_player.csv", index=False
+    )
+    player_by_zone_table.to_csv(
+        f"{PATH_TO_DESKTOP}{date_game_vs}_player_by_zone.csv", index=False
+    )
+    player_by_opp_table.to_csv(
+        f"{PATH_TO_DESKTOP}{date_game_vs}_player_by_opp.csv", index=False
+    )
+    tots_by_zone_table.to_csv(
+        f"{PATH_TO_DESKTOP}{date_game_vs}_team_tots_by_zone.csv", index=False
+    )
+    print("Completed compiling files on desktop. Go Huskies!")

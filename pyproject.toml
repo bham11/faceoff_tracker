@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "faceoff_tracker"
+version = "0.1.0"
+package-mode = false
+description = "Faceoff Tracking App for Northeastern Hockey"
+authors = ["Brandon Hampstead <brandonhampstead11@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+greenlet = "1.1.3"
+numpy = "1.23.2"
+pandas = "1.5.0"
+Pillow = "9.2.0"
+python-dateutil = "2.8.2"
+pytz = "2022.2.1"
+six = "1.16.0"
+SQLAlchemy = "1.4.41"
+tabulate = "0.8.10"
+Jinja2 = "3.1.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

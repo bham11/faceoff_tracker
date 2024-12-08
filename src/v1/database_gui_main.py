@@ -17,11 +17,10 @@ ZONE_MAPPING = {
     "6": "LDNZ",
     "7": "RDNZ",
     "8": "LD",
-    "9": "RD"
-
+    "9": "RD",
 }
 
-ZONE_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+ZONE_LIST = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 
 def add_filter_to_list(filter_list, filter):
@@ -32,9 +31,11 @@ def add_filter_to_list(filter_list, filter):
     return filter_list
 
 
-def build_hockey_query_db(table_name, husky: str, opp: str, period: str, strength: str, zone: str):
-    query = f'Select * From {table_name}'
-    filters = ''
+def build_hockey_query_db(
+    table_name, husky: str, opp: str, period: str, strength: str, zone: str
+):
+    query = f"Select * From {table_name}"
+    filters = ""
     if husky != "":
         filters = add_filter_to_list(filters, f"Player= {husky}")
     if opp != "":
@@ -52,13 +53,17 @@ def build_hockey_query_db(table_name, husky: str, opp: str, period: str, strengt
     return query
 
 
-def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: str, zone: str, by_opp: str):
-    query = 'Select Player'
-    fo_percetnage_query = ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || ' \
-                          f'CAST(count(result) AS varchar) AS "FO%"'
+def build_hockey_query(
+    table_name, husky: str, opp: str, period: str, strength: str, zone: str, by_opp: str
+):
+    query = "Select Player"
+    fo_percetnage_query = (
+        ', CAST(count(result) FILTER(WHERE Result = "W") AS varchar) || "/" || '
+        f'CAST(count(result) AS varchar) AS "FO%"'
+    )
     group_bys = " GROUP BY Player"
     table = f" FROM {table_name}"
-    filters = ''
+    filters = ""
     if husky != "":
         filters = add_filter_to_list(filters, f"Player= {husky}")
     if opp != "":
@@ -82,24 +87,24 @@ def build_hockey_query(table_name, husky: str, opp: str, period: str, strength: 
     return query + group_bys
 
 
-ROOT = '/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src'
-PATH_TO_DESKTOP = '/Users/brandonhampstead/Desktop/'
-DB_TEMP_PATH = f'{ROOT}/utils/faceoff_data_model.csv'
-FIRST_THIRD_RINK = f'{ROOT}/utils/first_and_third_rink.png'
-SECOND_RINK = f'{ROOT}/utils/second_period_rink.png'
+ROOT = "/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src"
+PATH_TO_DESKTOP = "/Users/brandonhampstead/Desktop/"
+DB_TEMP_PATH = f"{ROOT}/utils/faceoff_data_model.csv"
+FIRST_THIRD_RINK = f"{ROOT}/utils/first_and_third_rink.png"
+SECOND_RINK = f"{ROOT}/utils/second_period_rink.png"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # creating a dataframe instance
-    database_columns_csv = pd.read_csv(
-        DB_TEMP_PATH,
-        index_col=False)
+    database_columns_csv = pd.read_csv(DB_TEMP_PATH, index_col=False)
 
     # db engine
-    engine = sqlalchemy.create_engine('sqlite:///:memory:')
+    engine = sqlalchemy.create_engine("sqlite:///:memory:")
 
     # storing dataframe in a table
-    hockey_faceoff_data_table = database_columns_csv.to_sql('hockey_faceoff_data_table', engine, index=False)
+    hockey_faceoff_data_table = database_columns_csv.to_sql(
+        "hockey_faceoff_data_table", engine, index=False
+    )
 
     # variable to save a possible stats dataframe to export to excel
     df_to_export = pd.DataFrame()
@@ -109,18 +114,28 @@ if __name__ == '__main__':
     window.title("Northeastern Huskies Hockey - Faceoff Tracker")
 
     # period and strength frame
-    per_str_frame = tk.LabelFrame(text='Options')
+    per_str_frame = tk.LabelFrame(text="Options")
 
     # period radio buttons, will send that period to the add_FO method upon the enter of the result
     what_period = tk.StringVar(value="1rst")
-    first_period = tk.Radiobutton(master=per_str_frame, text="1rst", value="1rst", variable=what_period)
-    second_period = tk.Radiobutton(master=per_str_frame, text="2nd", value="2nd", variable=what_period)
-    third_period = tk.Radiobutton(master=per_str_frame, text="3rd", value="3rd", variable=what_period)
-    ot = tk.Radiobutton(master=per_str_frame, text="OT", value="OT", variable=what_period)
+    first_period = tk.Radiobutton(
+        master=per_str_frame, text="1rst", value="1rst", variable=what_period
+    )
+    second_period = tk.Radiobutton(
+        master=per_str_frame, text="2nd", value="2nd", variable=what_period
+    )
+    third_period = tk.Radiobutton(
+        master=per_str_frame, text="3rd", value="3rd", variable=what_period
+    )
+    ot = tk.Radiobutton(
+        master=per_str_frame, text="OT", value="OT", variable=what_period
+    )
 
     # strength radio buttons, will send that strength to the add_Fo method upon enter of the result
     strength = tk.StringVar(value="even")
-    even = tk.Radiobutton(master=per_str_frame, text="Even", value="even", variable=strength)
+    even = tk.Radiobutton(
+        master=per_str_frame, text="Even", value="even", variable=strength
+    )
     pk = tk.Radiobutton(master=per_str_frame, text="PK", value="pk", variable=strength)
     pp = tk.Radiobutton(master=per_str_frame, text="PP", value="pp", variable=strength)
 
@@ -134,7 +149,7 @@ if __name__ == '__main__':
     pk.grid(row=1, column=6)
 
     # frame of the input boxs, labels and log
-    input_frame = tk.LabelFrame(text='Inputs:')
+    input_frame = tk.LabelFrame(text="Inputs:")
     input_frame.config(width=200)
 
     what_zone = tk.Label(master=input_frame, text="What Zone (1-9)?")
@@ -149,7 +164,6 @@ if __name__ == '__main__':
     ask_result = tk.Label(master=input_frame, text="Result (W/L)?")
     result = tk.Entry(master=input_frame, width=2)
 
-
     # clear button input frame
     def clear_ents():
         zone.delete(0, END)
@@ -158,10 +172,9 @@ if __name__ == '__main__':
         result.delete(0, END)
         zone.focus()
 
-
     clear_entries = tk.Button(master=input_frame, text="Clear", command=clear_ents)
 
-    log = tkscrolled.ScrolledText(master=input_frame, width=40, wrap='word')
+    log = tkscrolled.ScrolledText(master=input_frame, width=40, wrap="word")
 
     # packing input widgets
     what_zone.grid(row=1, column=1)
@@ -192,8 +205,10 @@ if __name__ == '__main__':
     second_rink_photo.pack()
 
     # stats frame and widgets
-    stats_frame = tk.LabelFrame(text="Display Stats", )
-    stats_log = tkscrolled.ScrolledText(master=stats_frame, wrap='word')
+    stats_frame = tk.LabelFrame(
+        text="Display Stats",
+    )
+    stats_log = tkscrolled.ScrolledText(master=stats_frame, wrap="word")
     whose_stats = tk.Label(master=stats_frame, text="What Husky's FO stats?")
     what_opp = tk.Label(master=stats_frame, text="Against Who?")
     what_zone = tk.Label(master=stats_frame, text="Zone(1-9)?")
@@ -203,21 +218,45 @@ if __name__ == '__main__':
 
     # options buttons for stat tracking
     filter_periods = tk.StringVar(value="all per")
-    filter_first_period = tk.Radiobutton(master=stats_frame, text="1rst", value="1rst", variable=filter_periods)
-    filter_second_period = tk.Radiobutton(master=stats_frame, text="2nd", value="2nd", variable=filter_periods)
-    filter_third_period = tk.Radiobutton(master=stats_frame, text="3rd", value="3rd", variable=filter_periods)
-    filter_ot = tk.Radiobutton(master=stats_frame, text="OT", value="OT", variable=filter_periods)
-    filter_all_periods = tk.Radiobutton(master=stats_frame, text="All Per", value="all per", variable=filter_periods)
+    filter_first_period = tk.Radiobutton(
+        master=stats_frame, text="1rst", value="1rst", variable=filter_periods
+    )
+    filter_second_period = tk.Radiobutton(
+        master=stats_frame, text="2nd", value="2nd", variable=filter_periods
+    )
+    filter_third_period = tk.Radiobutton(
+        master=stats_frame, text="3rd", value="3rd", variable=filter_periods
+    )
+    filter_ot = tk.Radiobutton(
+        master=stats_frame, text="OT", value="OT", variable=filter_periods
+    )
+    filter_all_periods = tk.Radiobutton(
+        master=stats_frame, text="All Per", value="all per", variable=filter_periods
+    )
 
     filter_strength = tk.StringVar(value="all str")
-    filter_even = tk.Radiobutton(master=stats_frame, text="Even", value="even", variable=filter_strength)
-    filter_pk = tk.Radiobutton(master=stats_frame, text="PK", value="pk", variable=filter_strength)
-    filter_pp = tk.Radiobutton(master=stats_frame, text="PP", value="pp", variable=filter_strength)
-    filter_all_strengths = tk.Radiobutton(master=stats_frame, text="All Strs", value="all str",
-                                          variable=filter_strength)
-    give_all_ops = tk.StringVar(value= 'not op groups')
-    by_all_ops = tk.Radiobutton(master=stats_frame, text= "By All Ops", value= 'by_all_ops', variable= give_all_ops)
-    default_by_ops = tk.Radiobutton(master=stats_frame, text="Normal Ops", value='not op groups', variable=give_all_ops)
+    filter_even = tk.Radiobutton(
+        master=stats_frame, text="Even", value="even", variable=filter_strength
+    )
+    filter_pk = tk.Radiobutton(
+        master=stats_frame, text="PK", value="pk", variable=filter_strength
+    )
+    filter_pp = tk.Radiobutton(
+        master=stats_frame, text="PP", value="pp", variable=filter_strength
+    )
+    filter_all_strengths = tk.Radiobutton(
+        master=stats_frame, text="All Strs", value="all str", variable=filter_strength
+    )
+    give_all_ops = tk.StringVar(value="not op groups")
+    by_all_ops = tk.Radiobutton(
+        master=stats_frame, text="By All Ops", value="by_all_ops", variable=give_all_ops
+    )
+    default_by_ops = tk.Radiobutton(
+        master=stats_frame,
+        text="Normal Ops",
+        value="not op groups",
+        variable=give_all_ops,
+    )
 
     # to stats frame class
     def valid_stats_zone(z):
@@ -230,7 +269,6 @@ if __name__ == '__main__':
         else:
             return zone_up.get()
 
-
     def display_query():
         per_val = filter_periods.get()
         strength_val = filter_strength.get()
@@ -242,16 +280,19 @@ if __name__ == '__main__':
         #     zone_val =ZONE_MAPPING[zone_up.get()]
 
         # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
-        query = build_hockey_query(table_name='hockey_faceoff_data_table', husky=husky_val,
-                                   opp=opp_val, period=per_val, strength=strength_val, zone=zone_val,
-                                   by_opp= by_ops_value)
+        query = build_hockey_query(
+            table_name="hockey_faceoff_data_table",
+            husky=husky_val,
+            opp=opp_val,
+            period=per_val,
+            strength=strength_val,
+            zone=zone_val,
+            by_opp=by_ops_value,
+        )
         stats_log.delete("1.0", END)
         display_table = pd.read_sql_query(query, engine)
         stats_log.insert("1.0", display_table.to_markdown(index=False))
         return display_table
-
-
-
 
     def display_database():
         per_val = filter_periods.get()
@@ -262,27 +303,34 @@ if __name__ == '__main__':
             zone_val = ZONE_MAPPING[zone_up.get()]
         opp_val = opp_look_up.get()
         # def build_hockey_query(table_name, husky=None,opp=None, period=None, strength=None)
-        query = build_hockey_query_db(table_name='hockey_faceoff_data_table', husky=husky_val,
-                                      opp=opp_val, period=per_val, strength=strength_val, zone=zone_val)
+        query = build_hockey_query_db(
+            table_name="hockey_faceoff_data_table",
+            husky=husky_val,
+            opp=opp_val,
+            period=per_val,
+            strength=strength_val,
+            zone=zone_val,
+        )
         stats_log.delete("1.0", END)
         display_table = pd.read_sql_query(query, engine)
 
         stats_log.insert("1.0", display_table.to_markdown(index=False))
         return display_table
 
-
     def save_query_to_csv():
-        display_query().to_csv(f'{PATH_TO_DESKTOP}query_output.csv',index=False)
+        display_query().to_csv(f"{PATH_TO_DESKTOP}query_output.csv", index=False)
 
     def save_db_log_to_csv():
-        display_database().to_csv(f'{PATH_TO_DESKTOP}log_output.csv',index=False)
-
+        display_database().to_csv(f"{PATH_TO_DESKTOP}log_output.csv", index=False)
 
     run_query = tk.Button(master=stats_frame, text="Run", command=display_query)
     run_db_log = tk.Button(master=stats_frame, text="Run Log", command=display_database)
-    save_cur_query = tk.Button(master=stats_frame, text='Save Query', command=save_query_to_csv)
-    save_cur_db = tk.Button(master=stats_frame,text= "Save Log", command=save_db_log_to_csv)
-
+    save_cur_query = tk.Button(
+        master=stats_frame, text="Save Query", command=save_query_to_csv
+    )
+    save_cur_db = tk.Button(
+        master=stats_frame, text="Save Log", command=save_db_log_to_csv
+    )
 
     # option buttons on stat frame packing
     filter_all_periods.grid(row=0, column=0)
@@ -307,19 +355,17 @@ if __name__ == '__main__':
     run_query.grid(row=7, column=0)
     run_db_log.grid(row=7, column=1)
     stats_log.grid(row=8, columnspan=5)
-    save_cur_query.grid(row=7,column=2)
+    save_cur_query.grid(row=7, column=2)
     save_cur_db.grid(row=7, column=3)
 
-
     # packing frames
-    per_str_frame.pack(side='top', ipady=10)
-    rink_frame.pack(side='left', fill='both', expand=True)
-    input_frame.pack(side='left', fill='both', expand=True)
-    stats_frame.pack(side='left', fill='both', expand=True)
+    per_str_frame.pack(side="top", ipady=10)
+    rink_frame.pack(side="left", fill="both", expand=True)
+    input_frame.pack(side="left", fill="both", expand=True)
+    stats_frame.pack(side="left", fill="both", expand=True)
 
     # focusing on inputs
     zone.focus()
-
 
     def valid_zone(e):
 
@@ -330,7 +376,6 @@ if __name__ == '__main__':
         else:
             husky.focus()
 
-
     def valid_husky(e):
         if not husky.get().isdigit():
             log.insert("1.0", "Please input a valid husky jersey\n")
@@ -338,7 +383,6 @@ if __name__ == '__main__':
             husky.focus()
         else:
             opp.focus()
-
 
     def valid_opp(e):
         if not opp.get().isdigit():
@@ -348,7 +392,6 @@ if __name__ == '__main__':
         else:
             result.focus()
 
-
     def valid_stats_frame_husky(e):
         if not look_up.get().isdigit() and not look_up.get() == "":
             stats_log.insert("1.0", "Please input a valid husky jersey\n")
@@ -356,7 +399,6 @@ if __name__ == '__main__':
             look_up.focus()
         else:
             opp_look_up.focus()
-
 
     def valid_stats_frame_opp(e):
         if not opp_look_up.get().isdigit() and not opp_look_up.get() == "":
@@ -366,39 +408,45 @@ if __name__ == '__main__':
         else:
             zone_up.focus()
 
-
     def add_FO(e):
         # use csv as rdb to add this faceoff as a single entry with
         # period, player, opp, str, zone(mapped), result
 
         # if opp is "" / none then go for all opps
-        if result.get().upper() not in ['W', 'L']:
+        if result.get().upper() not in ["W", "L"]:
             log.insert("1.0", "Please input a valid result: W , L \n")
             result.delete(0, END)
             result.focus()
         else:
-            period_map = {
-                "1rst": "P1",
-                "2nd": "P2",
-                "3rd": "P3",
-                "OT": "OT"
-            }
+            period_map = {"1rst": "P1", "2nd": "P2", "3rd": "P3", "OT": "OT"}
             formatted_period = period_map[what_period.get()]
             formatted_zone = ZONE_MAPPING[zone.get()]
-            sql.execute('INSERT INTO hockey_faceoff_data_table VALUES(?,?,?,?,?,?)', engine,
-                        params=[(what_period.get(), husky.get(), opp.get(), strength.get(),
-                                 formatted_zone, result.get().upper())])
+            sql.execute(
+                "INSERT INTO hockey_faceoff_data_table VALUES(?,?,?,?,?,?)",
+                engine,
+                params=[
+                    (
+                        what_period.get(),
+                        husky.get(),
+                        opp.get(),
+                        strength.get(),
+                        formatted_zone,
+                        result.get().upper(),
+                    )
+                ],
+            )
             # print(pd.read_sql_query(f'SELECT * FROM hockey_faceoff_data_table', engine))
             # query = 'SELECT  player, count(result) AS "wins", zone FROM hockey_faceoff_data_table
             # WHERE result="w"  GROUP BY Player, Zone '
             # print(pd.read_sql_query(query, engine))
 
-            log.insert("1.0",
-                       f"{formatted_period}: {husky.get()} vs {opp.get()} in zone {formatted_zone}: "
-                       f"{result.get().upper()}\n")
+            log.insert(
+                "1.0",
+                f"{formatted_period}: {husky.get()} vs {opp.get()} in zone {formatted_zone}: "
+                f"{result.get().upper()}\n",
+            )
 
             clear_ents()
-
 
     # binding input frame entry boxes
     zone.bind("<Return>", valid_zone)
