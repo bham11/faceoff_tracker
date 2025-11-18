@@ -4,6 +4,7 @@ from pandas.io import sql
 from jinja2 import *
 import os
 
+from constants import PATH_TO_DESKTOP
 
 ZONE_MAPPING = {
     "1": "RO",
@@ -20,9 +21,6 @@ ZONE_MAPPING = {
 
 ZONE_LIST = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-ROOT = "/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src"
-DB_TEMP_PATH = f"{ROOT}/utils/faceoff_data_model.csv"
-PATH_TO_DESKTOP = "/Users/brandonhampstead/Desktop/"
 
 
 class HockeyDatabase:
