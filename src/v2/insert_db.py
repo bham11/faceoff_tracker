@@ -4,10 +4,6 @@ import pandas as pd
 import os
 from datetime import datetime
 
-ROOT = "/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src"
-DB_TEMP_PATH = f"{ROOT}/utils/faceoff_data_model.csv"
-PATH_TO_DESKTOP = "/Users/brandonhampstead/Desktop/"
-
 
 OPPONENTS = [
     "BC",

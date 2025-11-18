@@ -4,8 +4,7 @@ import tkinter.scrolledtext as tkscrolled
 from PIL import ImageTk, Image
 from datetime import date
 
-
-ROOT = "/Users/brandonhampstead/Documents/NortheasternHockey/faceoff_tracker/src"
+from constants import ROOT
 
 ZONE_MAPPING = {
     "1": "RO",
